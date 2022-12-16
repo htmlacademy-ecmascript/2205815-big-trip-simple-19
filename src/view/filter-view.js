@@ -1,4 +1,4 @@
-import {createElement} from './render.js';
+import {createElement} from '../render.js';
 
 function createFilterTeamplate() {
   return `<form class="trip-filters" action="#" method="get">

@@ -1,4 +1,4 @@
-import {createElement} from './render.js';
+import {createElement} from '../render.js';
 
 function createEmptyListTemplate() {
   return `<section class="trip-events">

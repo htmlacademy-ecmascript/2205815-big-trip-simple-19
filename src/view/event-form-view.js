@@ -1,4 +1,4 @@
-import {createElement} from './render.js';
+import {createElement} from '../render.js';
 
 function createEventTemplate() {
   return `<ul class="trip-events__list">
