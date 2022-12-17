@@ -2,6 +2,12 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+  resolve: {
+    alias: {
+      presenter: path.resolve(__dirname, 'src\presenter'),
+      view: path.resolve(__dirname, 'src\view'),
+    },
+  },
   entry: './src/main.js',
   output: {
     filename: 'bundle.js',
