@@ -1,5 +1,6 @@
 import {createElement} from '../render.js';
 
+
 function createEventTemplate() {
   return `<ul class="trip-events__list">
   <li class="trip-events__item">
@@ -314,7 +315,7 @@ function createEventWithoutDestinationTemplate() {
         </section>`;
 }
 
-function createEventWithoutOfferTemplate() {
+function createWithoutOfferTemplate() {
   return `<ul class="trip-events__list">
   <li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -431,7 +432,7 @@ function createEventWithoutOfferTemplate() {
 
 export class EventWithoutOfferView {
   getTemplate() {
-    return createEventWithoutOfferTemplate();
+    return createWithoutOfferTemplate();
   }
 
   getElement(){
