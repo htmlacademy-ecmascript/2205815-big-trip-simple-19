@@ -1,6 +1,12 @@
 import {createElement} from '../render.js';
+import {humanizePointDueDate} from '../utils.js';
 
-function createEditFormTemplate() {
+function createEventEditFormTemplate(editEventForm) {
+  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, offer_price: offerPrice} = editEventForm;
+  const humanizeDateFrom = humanizePointDueDate(dateFrom, 'HH:mm');
+  const humanizeDateTo = humanizePointDueDate(dateTo, 'HH:mm');
+  const humanizeStartEventDate = humanizePointDueDate(dateFrom, 'MMM DD');
+
   return `<form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
@@ -156,19 +162,24 @@ function createEditFormTemplate() {
   </form>`;
 }
 
-export class EditFormView {
-  getTemplate() {
-    return createEditFormTemplate();
+export class EventEditFormView {
+  constructor({editEventForm}) {
+    this.editEventForm = editEventForm;
   }
 
-  getElement(){
+  getTemplate() {
+    return createEventEditFormTemplate(this.editEventForm);
+  }
+
+  getElement() {
     if (!this.element){
       this.element = createElement(this.getTemplate());
     }
     return this.element;
   }
 
-  removeElement(){
+  removeElement() {
     this.element = null;
   }
 }
+
