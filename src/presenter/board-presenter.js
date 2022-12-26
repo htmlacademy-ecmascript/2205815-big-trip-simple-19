@@ -4,7 +4,7 @@ import {PointListView} from '../view/point-view.js';
 export class BoardPresenter {
   renderContainer = null;
 
-  constructor({renderContainer, pointModel,}) {
+  constructor({renderContainer, pointModel}) {
     this.renderContainer = renderContainer;
     this.pointModel = pointModel;
   }

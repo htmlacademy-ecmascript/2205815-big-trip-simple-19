@@ -1,4 +1,4 @@
-export const offers = [
+export const POINT_OFFERS = [
   {
     'id': 1,
     'title': 'Add luggage',

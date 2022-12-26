@@ -1,12 +1,21 @@
-import {createElement} from '../render.js';
-import {humanizePointDueDate} from '../utils.js';
-import {OfferContainerView} from './offer-container-view';
+import {createElement} from '../render';
+import {humanizePointDueDate} from '../utils';
+import {createOfferContainerTemplate} from '../view/offer-view';
+import {createDestinationContainerTemplate} from '../view/destination-view';
 
+const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
+const createTypeEventTemplate = (offersType) =>
+  offersType.map((element) =>
+    `<div class="event__type-item">
+      <input id="event-type-${element}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${element}">
+      <label class="event__type-label  event__type-label--${element}" for="event-type-${element}-1">${element}</label>
+      </div>`).join('');
 
 function createEventEditFormTemplate(editEventForm) {
-  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, offer_price: offerPrice} = editEventForm;
-  const humanizeDateFrom = humanizePointDueDate(dateFrom, 'HH:mm');
-  const humanizeDateTo = humanizePointDueDate(dateTo, 'HH:mm');
+  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, offers, offer_price: offerPrice} = editEventForm;
+  const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY HH:mm');
+  const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY HH:mm');
   const humanizeStartEventDate = humanizePointDueDate(dateFrom, 'MMM DD');
 
   return `<form class="event event--edit" action="#" method="post">
@@ -21,51 +30,7 @@ function createEventEditFormTemplate(editEventForm) {
         <div class="event__type-list">
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Event type</legend>
-
-            <div class="event__type-item">
-              <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-              <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
-              <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-              <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
-              <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
-              <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
-              <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
-              <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
-              <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
-              <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-            </div>
+            ${createTypeEventTemplate(OFFERS_BY_TYPE)}
           </fieldset>
         </div>
       </div>
@@ -84,10 +49,10 @@ function createEventEditFormTemplate(editEventForm) {
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 12:25">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value=${humanizeDateFrom}>
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 13:35">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value=${dateTo}>
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -95,7 +60,7 @@ function createEventEditFormTemplate(editEventForm) {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="160">
+        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=${basePrice}>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -104,13 +69,8 @@ function createEventEditFormTemplate(editEventForm) {
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
-    <section class="event__details">
-    
-      <section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">Chamonix-Mont-Blanc (usually shortened to Chamonix) is a resort area near the junction of France, Switzerland and Italy. At the base of Mont Blanc, the highest summit in the Alps, it's renowned for its skiing.</p>
-      </section>
-    </section>
+    ${createOfferContainerTemplate()}
+    ${createDestinationContainerTemplate()}
   </form>`;
 }
 
