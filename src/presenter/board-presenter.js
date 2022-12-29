@@ -1,5 +1,5 @@
 import {render} from '../render.js';
-import {PointListView} from '../view/point-view.js';
+import {PointView} from '../view/point-view.js';
 
 export class BoardPresenter {
   renderContainer = null;
@@ -10,10 +10,7 @@ export class BoardPresenter {
   }
 
   init() {
-    this.boardPoints = [...this.pointModel.getPoint()];
-
-    for ( let i = 0; i < this.boardPoints.length; i++) {
-      render(new PointListView({point: this.boardPoints[i]}), this.renderContainer);
-    }
+    this.boardPoints = this.pointModel.getPoint();
+    render(new PointView({point: this.boardPoints}), this.renderContainer);
   }
 }

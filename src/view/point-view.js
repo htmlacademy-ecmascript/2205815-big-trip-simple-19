@@ -1,8 +1,15 @@
 import {createElement} from '../render.js';
 import {humanizePointDueDate} from '../utils.js';
 
+
+const getOfferTemplate = (offers) => offers.map((element) => `<li class="event__offer">
+<span class="event__offer-title">${element}</span>
+&plus;&euro;&nbsp;
+<span class="event__offer-price">10</span>
+</li>`).join('');
+
 function createPointTemplate(point) {
-  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, offer_price: offerPrice} = point;
+  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'HH:mm');
   const humanizeStartEventDate = humanizePointDueDate(dateFrom, 'MMM DD');
@@ -27,11 +34,7 @@ function createPointTemplate(point) {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      <li class="event__offer">
-        <span class="event__offer-title">${offers}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offerPrice}</span>
-      </li>
+    ${getOfferTemplate(offers)}
     </ul>
     <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
@@ -42,7 +45,7 @@ function createPointTemplate(point) {
 }
 
 
-export class PointListView {
+export class PointView {
   constructor({point}) {
     this.point = point;
   }

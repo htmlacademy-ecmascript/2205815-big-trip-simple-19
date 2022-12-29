@@ -1,7 +1,7 @@
 import {createElement} from '../render';
 import {humanizePointDueDate} from '../utils';
-import {createOfferContainerTemplate} from '../view/offer-view';
-import {createDestinationContainerTemplate} from '../view/destination-view';
+import {createOfferContainerTemplate} from './offer-view';
+import {createDestinationContainerTemplate} from './destination-view';
 
 const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
@@ -13,10 +13,9 @@ const createTypeEventTemplate = (offersType) =>
       </div>`).join('');
 
 function createEventEditFormTemplate(editEventForm) {
-  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, offers, offer_price: offerPrice} = editEventForm;
-  const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY HH:mm');
-  const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY HH:mm');
-  const humanizeStartEventDate = humanizePointDueDate(dateFrom, 'MMM DD');
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo} = editEventForm;
+  const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
+  const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
 
   return `<form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -52,7 +51,7 @@ function createEventEditFormTemplate(editEventForm) {
         <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value=${humanizeDateFrom}>
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value=${dateTo}>
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value=${humanizeDateTo}>
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -74,7 +73,7 @@ function createEventEditFormTemplate(editEventForm) {
   </form>`;
 }
 
-export class EventEditFormView {
+export class EditPointView {
   constructor({editEventForm}) {
     this.editEventForm = editEventForm;
   }

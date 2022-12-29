@@ -1,13 +1,9 @@
-import {getRandomPoint} from '../mock/mock-points.js';
+import {mockPoints} from '../mock/mock-points';
 
-const POINT_COUNT = 1;
+export class EditPointView {
+  point = mockPoints[0];
 
-export class EventEditFormModel {
-  events = Array.from({length: POINT_COUNT}, getRandomPoint);
-
-  getEvent() {
-    return this.events;
+  getPoint() {
+    return this.point;
   }
 }
-const ff = new EventEditFormModel();
-console.log(ff)

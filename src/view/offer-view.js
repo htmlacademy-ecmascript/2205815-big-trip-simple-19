@@ -1,4 +1,4 @@
-import {POINT_OFFERS} from '../mock/mock-offers';
+import {POINT_OFFERS} from '../mock/mock-offer';
 
 const createOfferTemplate = (offers) =>
 
@@ -13,10 +13,10 @@ const createOfferTemplate = (offers) =>
     </div>`).join('');
 
 
-export function createOfferContainerTemplate() {
-  return `<section class="event__section  event__section--offers">
+export const createOfferContainerTemplate = () =>
+  `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
           ${createOfferTemplate(POINT_OFFERS)}
           </section>`;
-}
+
