@@ -8,7 +8,7 @@ export const mockPoints = [
     'date_from': '2019-07-10T01:55:56.845Z',
     'date_to': '2019-07-11T02:22:13.375Z',
     'destination': 1,
-    'id': '1',
+    'id': [1,2,3],
     'offers': offerType,
     'type': 'taxi',
   },

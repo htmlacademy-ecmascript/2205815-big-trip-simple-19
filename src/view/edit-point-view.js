@@ -1,7 +1,5 @@
 import {createElement} from '../render';
 import {humanizePointDueDate} from '../utils';
-import {createOfferContainerTemplate} from './offer-view';
-import {createDestinationContainerTemplate} from './destination-view';
 
 const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
@@ -17,7 +15,7 @@ function createEventEditFormTemplate(editEventForm) {
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
 
-  return `<form class="event event--edit" action="#" method="post">
+  return `
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -67,10 +65,7 @@ function createEventEditFormTemplate(editEventForm) {
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>
-    </header>
-    ${createOfferContainerTemplate()}
-    ${createDestinationContainerTemplate()}
-  </form>`;
+    </header>`;
 }
 
 export class EditPointView {

@@ -19,4 +19,3 @@ export const createOfferContainerTemplate = () =>
           <div class="event__available-offers">
           ${createOfferTemplate(POINT_OFFERS)}
           </section>`;
-

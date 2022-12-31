@@ -1,20 +1,41 @@
-import {POINT_DESTINATION} from '../mock/mock-destination';
+import {createElement} from '../render';
 
-const createDestinationTemplate = (destinations) =>
-  destinations.map(({description: descriptionPoint, pictures:[{src, description: descriptionPhoto}]}) =>
+const createDestinationTemplate = ({destination}) => {
+  const {description: descriptionPoint, pictures:[{src, description: descriptionPhoto}]} = destination;
 
-    `<p class="event__destination-description">${descriptionPoint}</p>
+  return `<p class="event__destination-description">${descriptionPoint}</p>
 
   <div class="event__photos-container">
     <div class="event__photos-tape">
       <img class="event__photo" src=${src} alt=${descriptionPhoto}>
     </div>
-  </div>`).join('');
+  </div>`;
+};
 
-
-export const createDestinationContainerTemplate = () =>
+const createDestinationContainerTemplate = (destinations) =>
   `<section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            ${createDestinationTemplate(POINT_DESTINATION)}
+            ${createDestinationTemplate(destinations)}
           </section>`;
 
+export class DestinationView {
+
+  constructor(destinations){
+    this.destinations = destinations;
+  }
+
+  getTemplate() {
+    return createDestinationContainerTemplate(this.destinations);
+  }
+
+  getElement() {
+    if (!this.element){
+      this.element = createElement(this.getTemplate());
+    }
+    return this.element;
+  }
+
+  removeElement() {
+    this.element = null;
+  }
+}
