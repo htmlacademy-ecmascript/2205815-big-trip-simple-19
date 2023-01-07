@@ -8,4 +8,3 @@ export class DestinationModel {
     return this.destinations.find((element) => element.id === id);
   }
 }
-

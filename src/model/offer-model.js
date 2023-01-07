@@ -1,17 +1,19 @@
 import {POINT_OFFERS} from '../mock/mock-offer';
 
 export class OfferModel {
-  offers = POINT_OFFERS;
 
-  getOfferById(type, id) {
-    const offersBytype = [];
-    offersBytype.push(this.offers.find((element) => element.type === type));
+  availableType = POINT_OFFERS;
 
-    const offersArr = [];
+  getOfferById(id) {
+    const {type, offers} = id;
+    const offersById = [];
+    const elementByType = this.availableType.find((element) => element.type === type);
+    const allElementOffers = elementByType.offers;
 
-    for(let i = 0; i < id.length; i++) {
-      offersArr.push(offersBytype.find((element) => element.id === id[i]));
+    for(let i = 0; i < offers.length; i++) {
+      offersById.push(allElementOffers.find((element) => element.id === offers[i]));
     }
-    return offersArr;
+    return offersById;
   }
+
 }

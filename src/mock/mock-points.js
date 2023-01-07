@@ -1,5 +1,6 @@
 import {getRandomArrayElement} from '../utils.js';
 import {offerType} from '../const.js';
+import {POINT_OFFERS_BY_TYPE} from '../mock/mock-offer';
 
 
 export const mockPoints = [
@@ -8,7 +9,7 @@ export const mockPoints = [
     'date_from': '2019-07-10T01:55:56.845Z',
     'date_to': '2019-07-11T02:22:13.375Z',
     'destination': 1,
-    'id': [1,2,3],
+    'id': POINT_OFFERS_BY_TYPE,
     'offers': offerType,
     'type': 'taxi',
   },
