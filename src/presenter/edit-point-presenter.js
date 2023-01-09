@@ -19,7 +19,7 @@ export class EditPointPresenter {
   init() {
     this.editEvents = this.editEventForm.getPoint();
     const destination = this.destinationModel.getDestinationById(this.editEvents.destination);
-    const offers = this.offerModel.getOfferById(this.editEvents.id);
+    const offers = this.offerModel.getOfferById(this.editEvents.offers);
 
     render(this.editPointContainerView, this.renderContainer);
     render(new EditPointView({editEventForm: this.editEvents}), this.editPointContainerView.getElement());
