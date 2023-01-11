@@ -6,6 +6,7 @@ module.exports = {
     alias: {
       presenter: path.resolve(__dirname, 'src\presenter'),
       view: path.resolve(__dirname, 'src\view'),
+      model: path.resolve(__dirname, 'src\model'),
     },
   },
   entry: './src/main.js',
