@@ -19,23 +19,24 @@ const createDestinationContainerTemplate = (destinations) =>
           </section>`;
 
 export class DestinationView {
+  #element = null;
 
   constructor(destinations){
     this.destinations = destinations;
   }
 
-  getTemplate() {
+  get template() {
     return createDestinationContainerTemplate(this.destinations);
   }
 
-  getElement() {
-    if (!this.element){
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element){
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

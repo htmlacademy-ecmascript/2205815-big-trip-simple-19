@@ -3,7 +3,6 @@ import {render} from './render';
 import {BoardPresenter} from './presenter/board-presenter';
 import {PointModel} from './model/points-model';
 import {EditPointPresenter} from './presenter/edit-point-presenter';
-import {SortView} from './view/sort-view';
 import {DestinationModel} from './model/destination-model';
 import {OfferModel} from './model/offer-model';
 
@@ -17,7 +16,6 @@ const eventEditFormPresenter = new EditPointPresenter({renderContainer: siteMain
 
 
 render(new FilterView(), siteHeaderElement);
-render(new SortView(), siteMainElement);
 
 boardPresenter.init();
-eventEditFormPresenter.init();
+//eventEditFormPresenter.init();

@@ -10,12 +10,13 @@ const createTypeEventTemplate = (offersType) =>
       <label class="event__type-label  event__type-label--${element}" for="event-type-${element}-1">${element}</label>
       </div>`).join('');
 
-function createEventEditFormTemplate(editEventForm) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo} = editEventForm;
+function createEventEditFormTemplate(point) {
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
 
   return `
+  <form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -65,27 +66,30 @@ function createEventEditFormTemplate(editEventForm) {
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>
-    </header>`;
+    </header>
+    </form>`;
 }
 
 export class EditPointView {
-  constructor({editEventForm}) {
-    this.editEventForm = editEventForm;
+  #element = null;
+
+  constructor({point}) {
+    this.point = point;
   }
 
-  getTemplate() {
-    return createEventEditFormTemplate(this.editEventForm);
+  get template() {
+    return createEventEditFormTemplate(this.point);
   }
 
-  getElement() {
-    if (!this.element){
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element){
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
 

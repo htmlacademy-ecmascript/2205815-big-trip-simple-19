@@ -2,14 +2,16 @@ import {createElement} from '../render.js';
 import {humanizePointDueDate} from '../utils.js';
 
 
-const getOfferTemplate = (offers) => offers.map((element) => `<li class="event__offer">
-<span class="event__offer-title">${element}</span>
+function getOfferTemplate(offers) {
+  return offers.map(({title, price}) => `<li class="event__offer">
+<span class="event__offer-title">${title}</span>
 &plus;&euro;&nbsp;
-<span class="event__offer-price">10</span>
+<span class="event__offer-price">${price}</span>
 </li>`).join('');
+}
 
 function createPointTemplate(point) {
-  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers} = point;
+  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, offers} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'HH:mm');
   const humanizeStartEventDate = humanizePointDueDate(dateFrom, 'MMM DD');
@@ -21,7 +23,7 @@ function createPointTemplate(point) {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">Check-in ${destination}</h3>
+    <h3 class="event__title">${type} to Moon and Back</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime=${dateFrom}>${humanizeDateFrom}</time>
@@ -46,22 +48,24 @@ function createPointTemplate(point) {
 
 
 export class PointView {
+  #element = null;
+
   constructor({point}) {
     this.point = point;
   }
 
-  getTemplate() {
+  get template() {
     return createPointTemplate(this.point);
   }
 
-  getElement() {
-    if (!this.element){
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element){
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
