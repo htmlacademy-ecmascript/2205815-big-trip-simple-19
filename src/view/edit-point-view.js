@@ -11,9 +11,10 @@ const createTypeEventTemplate = (offersType) =>
       </div>`).join('');
 
 function createEventEditFormTemplate(point) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo} = point;
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, destination} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
+  const destinationName = destination.name;
 
   return `
   <form class="event event--edit" action="#" method="post">
@@ -21,7 +22,7 @@ function createEventEditFormTemplate(point) {
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -35,9 +36,9 @@ function createEventEditFormTemplate(point) {
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          Flight
+          ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destinationName} list="destination-list-1">
         <datalist id="destination-list-1">
           <option value="Amsterdam"></option>
           <option value="Geneva"></option>

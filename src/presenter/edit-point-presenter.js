@@ -1,13 +1,14 @@
+/*
 import {render} from '../render';
 import {EditPointView} from '../view/edit-point-view';
 import {DestinationView} from '../view/destination-view';
-import {EditPointContainerView} from '../view/edit-point-container-view';
+//import {EditPointContainerView} from '../view/point-container-view';
 import {OfferView} from '../view/offer-view';
 
 
 export class EditPointPresenter {
   #renderContainer = null;
-  #editPointContainer = new EditPointContainerView();
+  //#editPointContainer = new EditPointContainerView();
   #editEventForm = null;
   #destinationModel = null;
   #offerModel = null;
@@ -30,4 +31,4 @@ export class EditPointPresenter {
     render(new DestinationView({destination}), this.#editPointContainer.element);
   }
 }
-
+*/

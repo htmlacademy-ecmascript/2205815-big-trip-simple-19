@@ -11,19 +11,20 @@ function getOfferTemplate(offers) {
 }
 
 function createPointTemplate(point) {
-  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, offers} = point;
+  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, offers, destination} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'HH:mm');
   const humanizeStartEventDate = humanizePointDueDate(dateFrom, 'MMM DD');
+  const destinationName = destination.name;
 
-  return `<ul class="trip-events__list">
+  return `
   <li class="trip-events__item">
   <div class="event">
     <time class="event__date" datetime=${dateFrom}>${humanizeStartEventDate}</time>
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">${type} to Moon and Back</h3>
+    <h3 class="event__title">${type} to ${destinationName}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime=${dateFrom}>${humanizeDateFrom}</time>
@@ -43,7 +44,7 @@ function createPointTemplate(point) {
     </button>
   </div>
 </li>
-  </ul>`;
+  `;
 }
 
 

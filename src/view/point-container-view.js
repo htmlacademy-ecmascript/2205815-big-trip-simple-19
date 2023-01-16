@@ -1,14 +1,14 @@
 import {createElement} from '../render';
 
-const createEditPointContainerTemplate = () =>
-  `<form class="event event--edit" action="#" method="post">
-</form>`;
+const createPointContainerTemplate = () =>
+  `<ul class="trip-events__list">
+</ul>`;
 
-export class EditPointContainerView {
+export class PointContainerView {
   #element = null;
 
   get template() {
-    return createEditPointContainerTemplate();
+    return createPointContainerTemplate();
   }
 
   get element() {

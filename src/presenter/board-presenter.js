@@ -3,16 +3,23 @@ import {PointView} from '../view/point-view';
 import {EditPointView} from '../view/edit-point-view';
 import {EmptyListView} from '../view/empty-list-view';
 import {SortView} from '../view/sort-view';
+import {DestinationView} from '../view/destination-view';
+import {PointContainerView} from '../view/point-container-view';
 import {OfferView} from '../view/offer-view';
 const siteMainElement = document.querySelector('.trip-events');
 
 export class BoardPresenter {
   #renderContainer = null;
   #pointModel = null;
+  #offerModel = null;
+  #destinationModel = null;
+  #pointContainerView = new PointContainerView();
 
-  constructor({renderContainer, pointModel}) {
+  constructor({renderContainer, pointModel, offerModel, destinationModel}) {
     this.#renderContainer = renderContainer;
     this.#pointModel = pointModel;
+    this.#offerModel = offerModel;
+    this.#destinationModel = destinationModel;
   }
 
   init() {
@@ -20,25 +27,39 @@ export class BoardPresenter {
   }
 
   #renderBoard() {
+    const points = Array.from(this.#pointModel.getPoint());
 
     if (this.pointModel) {
-      return render(new EmptyListView(),this.#renderContainer);
+      render(new EmptyListView(),this.#renderContainer);
+      return;
     }
     render(new SortView(), siteMainElement);
-    this.boardPoints = this.#pointModel.getPoint();
-    this.#renderPoint(this.boardPoints);
+
+    for(const point of points) {
+      const offerIds = point.offers;
+      point.offers = this.#offerModel.getOfferById(offerIds);
+      this.#renderPoint(point);
+
+    }
   }
 
   #renderPoint(point) {
     const pointComponent = new PointView({point});
     const pointEditFormComponent = new EditPointView({point});
+    const offers = point.offers;
+    const destination = this.#destinationModel.getDestinationById(point.destination);
+    point.destination = destination;
+
+    render(this.#pointContainerView, this.#renderContainer);
+    render(new OfferView(offers), pointEditFormComponent.element);
+    render(new DestinationView({destination}), pointEditFormComponent.element);
 
     const replacePointToEditForm = () => {
-      this.#renderContainer.replaceChild(pointEditFormComponent.element, pointComponent.element);
+      this.#pointContainerView.element.replaceChild(pointEditFormComponent.element, pointComponent.element);
     };
 
     const replaceEditFormToPoint = () => {
-      this.#renderContainer.replaceChild(pointComponent.element, pointEditFormComponent.element);
+      this.#pointContainerView.element.replaceChild(pointComponent.element, pointEditFormComponent.element);
     };
 
     const escKeyDownHandler = (evt) => {
@@ -60,7 +81,12 @@ export class BoardPresenter {
       document.removeEventListener('keydown', escKeyDownHandler);
     });
 
-    render(pointComponent, this.#renderContainer);
-    //render(new OfferView(), this.#renderContainer);
+    pointEditFormComponent.element.addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceEditFormToPoint();
+      document.removeEventListener('keydown', escKeyDownHandler);
+    });
+
+    render(pointComponent, this.#pointContainerView.element);
   }
 }
