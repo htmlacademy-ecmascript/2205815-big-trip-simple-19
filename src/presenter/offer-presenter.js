@@ -1,3 +1,4 @@
+/*
 import {render} from '../render.js';
 import {OfferView} from '../view/offer-view';
 
@@ -17,3 +18,4 @@ export class OfferPresenter {
     }
   }
 }
+*/

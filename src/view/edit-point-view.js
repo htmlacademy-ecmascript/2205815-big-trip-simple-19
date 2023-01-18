@@ -10,17 +10,19 @@ const createTypeEventTemplate = (offersType) =>
       <label class="event__type-label  event__type-label--${element}" for="event-type-${element}-1">${element}</label>
       </div>`).join('');
 
-function createEventEditFormTemplate(editEventForm) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo} = editEventForm;
+function createEventEditFormTemplate(point) {
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, destination} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
+  const destinationName = destination.name;
 
   return `
+  <form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -34,9 +36,9 @@ function createEventEditFormTemplate(editEventForm) {
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          Flight
+          ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destinationName} list="destination-list-1">
         <datalist id="destination-list-1">
           <option value="Amsterdam"></option>
           <option value="Geneva"></option>
@@ -65,27 +67,30 @@ function createEventEditFormTemplate(editEventForm) {
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>
-    </header>`;
+    </header>
+    </form>`;
 }
 
 export class EditPointView {
-  constructor({editEventForm}) {
-    this.editEventForm = editEventForm;
+  #element = null;
+
+  constructor({point}) {
+    this.point = point;
   }
 
-  getTemplate() {
-    return createEventEditFormTemplate(this.editEventForm);
+  get template() {
+    return createEventEditFormTemplate(this.point);
   }
 
-  getElement() {
-    if (!this.element){
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element){
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
 
