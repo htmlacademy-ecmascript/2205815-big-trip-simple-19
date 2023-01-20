@@ -29,7 +29,7 @@ export class BoardPresenter {
   #renderBoard() {
     const points = Array.from(this.#pointModel.getPoint());
 
-    if (this.pointModel) {
+    if (points.length === 0) {
       render(new EmptyListView(),this.#renderContainer);
       return;
     }
@@ -54,36 +54,46 @@ export class BoardPresenter {
     render(new OfferView(offers), pointEditFormComponent.element);
     render(new DestinationView({destination}), pointEditFormComponent.element);
 
-    const replacePointToEditForm = () => {
-      this.#pointContainerView.element.replaceChild(pointEditFormComponent.element, pointComponent.element);
+    const showEditForm = () => {
+      pointComponent.element.append(pointEditFormComponent.element);
     };
 
-    const replaceEditFormToPoint = () => {
-      this.#pointContainerView.element.replaceChild(pointComponent.element, pointEditFormComponent.element);
+    const closeEditForm = () => {
+      pointEditFormComponent.element.remove();
     };
 
     const escKeyDownHandler = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        replaceEditFormToPoint();
+        closeEditForm();
         document.removeEventListener('keydown', escKeyDownHandler);
       }
     };
+    const closeOpenForm = () => {
+      const openForms = document.querySelectorAll('.event--edit');
+      if (openForms) {
+        for (const form of openForms) {
+          form.remove();
+        }
+      }
+    };
+
 
     pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-      replacePointToEditForm();
+      closeOpenForm();
+      showEditForm();
       document.addEventListener('keydown', escKeyDownHandler);
     });
 
     pointEditFormComponent.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
       evt.preventDefault();
-      replaceEditFormToPoint();
+      closeEditForm();
       document.removeEventListener('keydown', escKeyDownHandler);
     });
 
     pointEditFormComponent.element.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      replaceEditFormToPoint();
+      closeEditForm();
       document.removeEventListener('keydown', escKeyDownHandler);
     });
 
