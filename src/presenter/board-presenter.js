@@ -29,7 +29,7 @@ export class BoardPresenter {
   #renderBoard() {
     const points = Array.from(this.#pointModel.getPoint());
 
-    if (!this.#pointModel) {
+    if (points.length === 0) {
       render(new EmptyListView(),this.#renderContainer);
       return;
     }
