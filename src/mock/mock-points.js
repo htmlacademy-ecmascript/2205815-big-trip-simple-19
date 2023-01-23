@@ -5,7 +5,7 @@ export const mockPoints = [
   {
     'base_price': 1100,
     'date_from': '2019-07-10T01:55:56.845Z',
-    'date_to': '2019-07-11T02:22:13.375Z',
+    'date_to': '2019-08-11T02:22:13.375Z',
     'destination': 1,
     'id': '0',
     'offers': [1,2,3],
@@ -13,8 +13,8 @@ export const mockPoints = [
   },
   {
     'base_price': 500,
-    'date_from': '2019-07-10T01:55:56.845Z',
-    'date_to': '2019-07-11T02:22:13.375Z',
+    'date_from': '2020-09-10T01:55:56.845Z',
+    'date_to': '2020-10-11T02:22:13.375Z',
     'destination': 3,
     'id': '0',
     'offers': [1,2,3,4],
@@ -22,8 +22,8 @@ export const mockPoints = [
   },
   {
     'base_price': 1600,
-    'date_from': '2019-07-10T01:55:56.845Z',
-    'date_to': '2019-07-11T02:22:13.375Z',
+    'date_from': '2019-11-10T01:55:56.845Z',
+    'date_to': '2019-12-11T02:22:13.375Z',
     'destination': 2,
     'id': '0',
     'offers': [1,2,3,4,5],

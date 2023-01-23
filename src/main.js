@@ -1,5 +1,5 @@
-import {FilterView} from './view/filter-view';
-import {render} from './render';
+import FilterView from './view/filter-view';
+import {render} from './framework/render.js';
 import {BoardPresenter} from './presenter/board-presenter';
 import {PointModel} from './model/points-model';
 import {DestinationModel} from './model/destination-model';

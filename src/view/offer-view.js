@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createOfferTemplate = (offers) =>
 
@@ -19,27 +19,16 @@ export const createOfferContainerTemplate = (offers) =>
           ${createOfferTemplate(offers)}
           </section>`;
 
-export class OfferView {
-  #element = null;
+export default class OfferView extends AbstractView {
+  offers = null;
 
   constructor(offers){
+    super();
     this.offers = offers;
   }
 
   get template() {
     return createOfferContainerTemplate(this.offers);
-  }
-
-  get element() {
-    if (!this.#element){
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
 

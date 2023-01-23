@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createDestinationTemplate = ({destination}) => {
   const {description: descriptionPoint, pictures:[{src, description: descriptionPhoto}]} = destination;
@@ -18,25 +18,16 @@ const createDestinationContainerTemplate = (destinations) =>
             ${createDestinationTemplate(destinations)}
           </section>`;
 
-export class DestinationView {
-  #element = null;
+export default class DestinationView extends AbstractView {
 
-  constructor(destinations){
+  destinations = null;
+
+  constructor(destinations) {
+    super();
     this.destinations = destinations;
   }
 
   get template() {
     return createDestinationContainerTemplate(this.destinations);
-  }
-
-  get element() {
-    if (!this.#element){
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

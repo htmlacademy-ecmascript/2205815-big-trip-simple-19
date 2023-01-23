@@ -1,11 +1,11 @@
-import {render} from '../render';
-import {PointView} from '../view/point-view';
-import {EditPointView} from '../view/edit-point-view';
-import {EmptyListView} from '../view/empty-list-view';
-import {SortView} from '../view/sort-view';
-import {DestinationView} from '../view/destination-view';
-import {PointContainerView} from '../view/point-container-view';
-import {OfferView} from '../view/offer-view';
+import {render} from '../framework/render.js';
+import PointView from '../view/point-view';
+import EditPointView from '../view/edit-point-view';
+import EmptyListView from '../view/empty-list-view';
+import SortView from '../view/sort-view';
+import DestinationView from '../view/destination-view';
+import PointContainerView from '../view/point-container-view';
+import OfferView from '../view/offer-view';
 const siteMainElement = document.querySelector('.trip-events');
 
 export class BoardPresenter {
@@ -44,58 +44,57 @@ export class BoardPresenter {
   }
 
   #renderPoint(point) {
-    const pointComponent = new PointView({point});
-    const pointEditFormComponent = new EditPointView({point});
     const offers = point.offers;
     const destination = this.#destinationModel.getDestinationById(point.destination);
     point.destination = destination;
+
+    const pointComponent = new PointView({point,
+      onEditFormClick: () => {
+        closeOpenForm.call(this);
+        showEditForm.call(this);
+        document.addEventListener('keydown', escKeyDownHandler);
+        document.addEventListener('submit', (evt) => {
+          evt.preventDefault();
+          closeEditForm();
+        });
+      }
+    });
+
+    const pointEditFormComponent = new EditPointView({point,
+      onCloseBtnClick: () => {
+        closeEditForm.call(this);
+        document.removeEventListener('keydown', escKeyDownHandler);}
+    });
+
 
     render(this.#pointContainerView, this.#renderContainer);
     render(new OfferView(offers), pointEditFormComponent.element);
     render(new DestinationView({destination}), pointEditFormComponent.element);
 
-    const showEditForm = () => {
+    function showEditForm() {
       pointComponent.element.append(pointEditFormComponent.element);
-    };
+    }
 
-    const closeEditForm = () => {
+    function closeEditForm() {
       pointEditFormComponent.element.remove();
-    };
+    }
 
-    const escKeyDownHandler = (evt) => {
+    function escKeyDownHandler(evt) {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
         closeEditForm();
         document.removeEventListener('keydown', escKeyDownHandler);
       }
-    };
-    const closeOpenForm = () => {
+    }
+
+    function closeOpenForm() {
       const openForms = document.querySelectorAll('.event--edit');
       if (openForms) {
         for (const form of openForms) {
           form.remove();
         }
       }
-    };
-
-
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-      closeOpenForm();
-      showEditForm();
-      document.addEventListener('keydown', escKeyDownHandler);
-    });
-
-    pointEditFormComponent.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
-      evt.preventDefault();
-      closeEditForm();
-      document.removeEventListener('keydown', escKeyDownHandler);
-    });
-
-    pointEditFormComponent.element.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      closeEditForm();
-      document.removeEventListener('keydown', escKeyDownHandler);
-    });
+    }
 
     render(pointComponent, this.#pointContainerView.element);
   }

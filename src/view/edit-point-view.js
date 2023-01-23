@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDueDate} from '../utils';
 
 const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
@@ -71,26 +71,26 @@ function createEventEditFormTemplate(point) {
     </form>`;
 }
 
-export class EditPointView {
-  #element = null;
+export default class EditPointView extends AbstractView {
+  point = null;
+  onCloseBtnClick = null;
 
-  constructor({point}) {
+  constructor({point, onCloseBtnClick}) {
+    super();
     this.point = point;
+    this.handleCloseBtnClick = onCloseBtnClick;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      this.closeBtnClickHandler();
+    });
   }
 
   get template() {
     return createEventEditFormTemplate(this.point);
   }
 
-  get element() {
-    if (!this.#element){
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  closeBtnClickHandler = () => {
+    this.handleCloseBtnClick();
+  };
 }
-
