@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-view.js';
 import {humanizePointDueDate} from '../utils';
 
 const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
@@ -71,8 +71,7 @@ function createEventEditFormTemplate(point) {
     </form>`;
 }
 
-export default class EditPointView extends AbstractView {
-  point = null;
+export default class EditPointView extends AbstractStatefulView {
   onCloseBtnClick = null;
 
   constructor({point, onCloseBtnClick}) {
@@ -93,4 +92,6 @@ export default class EditPointView extends AbstractView {
   closeBtnClickHandler = () => {
     this.handleCloseBtnClick();
   };
+
 }
+
