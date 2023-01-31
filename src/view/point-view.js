@@ -48,7 +48,7 @@ function createPointTemplate(point) {
 }
 
 
-export default class PointView extends AbstractView{
+export default class PointView extends AbstractView {
   point = null;
   onEditFormClick = null;
 
@@ -69,4 +69,5 @@ export default class PointView extends AbstractView{
   editFormClickHandler = () => {
     this.handleEditFormClick();
   };
+
 }

@@ -30,8 +30,35 @@ function creatFilterTeamplate() {
 }
 
 export default class SortView extends AbstractView {
+  clickSortByPriceHandler = null;
+  clickSortByDateHandler = null;
+
+  constructor({clickSortByPriceHandler, clickSortByDateHandler}) {
+    super();
+    this.clickSortByPriceHandler = clickSortByPriceHandler;
+    this.clickSortByDateHandler = clickSortByDateHandler;
+
+
+    this.element.addEventListener('click', (evt) => {
+      if (evt.target.id === 'sort-day' ) {
+        this.getClickSortByDateHandler();
+      }
+      if (evt.target.id === 'sort-price') {
+        this.getClickSortByPriceHandler();
+      }
+    });
+
+  }
 
   get template() {
     return creatFilterTeamplate();
+  }
+
+  getClickSortByPriceHandler() {
+    this.clickSortByPriceHandler();
+  }
+
+  getClickSortByDateHandler() {
+    this.clickSortByDateHandler();
   }
 }
