@@ -2,6 +2,7 @@ import {render} from '../framework/render.js';
 import EmptyListView from '../view/empty-list-view';
 import SortView from '../view/sort-view';
 import PointPresenter from './point-presenter.js';
+import PointContainerView from '../view/point-container-view';
 
 const siteMainElement = document.querySelector('.trip-events');
 
@@ -11,6 +12,8 @@ export class BoardPresenter {
   #offerModel = null;
   #destinationModel = null;
   pointPresenter = new Map();
+  #pointContainerView = new PointContainerView();
+  noPointList = new EmptyListView();
 
   constructor({renderContainer, pointModel, offerModel, destinationModel}) {
     this.#renderContainer = renderContainer;
@@ -27,77 +30,72 @@ export class BoardPresenter {
       point.offers = this.#offerModel.getOfferById(offerIds);
       point.destination = this.#destinationModel.getDestinationById(point.destination);
     }
-
-    this.sortView();
+    this.renderSortView();
     this.#renderBoard();
   }
 
   #renderBoard() {
 
     if (this.points.length === 0) {
-      render(new EmptyListView(), this.#renderContainer);
+      this.renderNoPointsList();
       return;
     }
 
     for (const point of this.points) {
       this.#renderPoint(point);
     }
-  }
 
-  sortView() {
-    const sortView = new SortView({
-      clickSortByPriceHandler: () => {
-        this.clearPointList();
-        const points = Array.from(this.#pointModel.getPointByPrice());
-        for (const point of points) {
-          this.#renderPoint(point);
-        }
-      },
-      clickSortByDateHandler: () => {
-        this.clearPointList();
-        const points = Array.from(this.#pointModel.getPoint());
-        for (const point of points) {
-          this.#renderPoint(point);
-        }
-      }
-    });
-
-    render(sortView, siteMainElement);
+    render(this.#pointContainerView, siteMainElement);
   }
 
 
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
-      renderContainer: siteMainElement
-    });
+      renderContainer: this.#pointContainerView.element, onModeChange: this.handleModeChange});
     pointPresenter.init(point);
+    this.pointPresenter.set(point.id, pointPresenter);
   }
 
-  clearPointList() {
-    const openPoints = document.querySelectorAll('.trip-events__list');
-    if(openPoints) {
-      for (const point of openPoints) {
-        point.remove();
-      }
-    }
+  renderSortView() {
+    const sortView = new SortView({
+      clickSortByPriceHandler: this.sortByPriceHandler,
+      clickSortByDateHandler: this.sortByDateHandler
+    });
 
+    render(sortView, siteMainElement);
   }
 
-  sortByDateHandler() {
-    this.clearPointList();
-    const points = Array.from(this.#pointModel.getPoint());
-    for (const point of points) {
-      this.#renderPoint(point);
-    }
-    render(this.sortView, siteMainElement);
-  }
-
-  sortByPriceHandler() {
+  sortByPriceHandler = () => {
     this.clearPointList();
     const points = Array.from(this.#pointModel.getPointByPrice());
     for (const point of points) {
       this.#renderPoint(point);
     }
-    render(this.sortView, siteMainElement);
+  };
+
+  sortByDateHandler = () => {
+    this.clearPointList();
+    const points = Array.from(this.#pointModel.getPoint());
+    for (const point of points) {
+      this.#renderPoint(point);
+    }
+  };
+
+  renderNoPointsList() {
+    render(this.noPointList, this.#renderContainer);
+  }
+
+  clearPointList() {
+    this.pointPresenter.forEach((presenter) => presenter.destroy());
+    this.pointPresenter.clear();
+  }
+
+  handleModeChange = () => {
+    this.pointPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  clearTaskList() {
+    this.pointPresenter.forEach((presenter) => presenter.destroy());
+    this.pointPresenter.clear();
   }
 }
