@@ -127,7 +127,6 @@ export default class EditPointView extends AbstractStatefulView {
     super();
     this._setState(EditPointView.parsePointToState(point));
     this.handleCloseBtnClick = onCloseBtnClick;
-    console.log(this._state);
     this._restoreHandlers();
   }
 
