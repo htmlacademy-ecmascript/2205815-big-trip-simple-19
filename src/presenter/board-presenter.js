@@ -94,8 +94,4 @@ export class BoardPresenter {
     this.pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  clearTaskList() {
-    this.pointPresenter.forEach((presenter) => presenter.destroy());
-    this.pointPresenter.clear();
-  }
 }
