@@ -218,9 +218,7 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     const newOffers = POINT_OFFERS.filter((pointOffers) => evt.target.value.includes(pointOffers.type));
     this.updateElement({
-      offers: newOffers[0].offers
-    });
-    this.updateElement({
+      offers: newOffers[0].offers,
       type: evt.target.value
     });
 
