@@ -40,7 +40,7 @@ export default class SortView extends AbstractView {
 
 
     this.element.addEventListener('click', (evt) => {
-      if (evt.target.id === 'sort-day' ) {
+      if (evt.target.id === 'sort-day') {
         this.getClickSortByDateHandler();
       }
       if (evt.target.id === 'sort-price') {

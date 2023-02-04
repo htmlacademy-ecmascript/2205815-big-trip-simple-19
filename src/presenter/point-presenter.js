@@ -1,8 +1,6 @@
 import {render, replace, remove} from '../framework/render.js';
 import PointView from '../view/point-view';
 import EditPointView from '../view/edit-point-view';
-import DestinationView from '../view/destination-view';
-import OfferView from '../view/offer-view';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -28,7 +26,7 @@ export default class PointPresenter {
     this.point = point;
     const prevPointComponent = this.pointComponent;
     const prevPointEditFormComponent = this.pointEditFormComponent;
-    const {destination, offers} = point;
+
 
     this.pointComponent = new PointView({point: this.point,
       onEditFormClick: this.handleEditClick});
@@ -39,20 +37,14 @@ export default class PointPresenter {
 
     if (prevPointComponent === null || prevPointEditFormComponent === null) {
       render(this.pointComponent, this.#renderContainer);
-      render(new OfferView(offers), this.pointEditFormComponent.element);
-      return render(new DestinationView({destination}), this.pointEditFormComponent.element);
-    }
-
-    if (this.#mode === Mode.DEFAULT) {
-      replace(this.pointComponent.element, prevPointComponent);
     }
 
     if (this.#mode === Mode.EDITING) {
       replace(this.pointEditFormComponent, prevPointEditFormComponent);
     }
 
-    remove(this.prevPointComponent);
-    remove(this.prevPointEditFormComponent);
+    remove(prevPointComponent);
+    remove(prevPointEditFormComponent);
   }
 
   destroy() {
@@ -62,6 +54,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.pointEditFormComponent.reset(this.point);
       this.replaceFormToPoint();
     }
   }
@@ -82,6 +75,7 @@ export default class PointPresenter {
   escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.pointEditFormComponent.reset(this.point);
       this.replaceFormToPoint();
     }
   };
@@ -91,6 +85,7 @@ export default class PointPresenter {
   };
 
   handleFormSubmit = () => {
+    this.pointEditFormComponent.reset(this.point);
     this.replaceFormToPoint();
   };
 }

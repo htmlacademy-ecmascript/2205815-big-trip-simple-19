@@ -37,7 +37,4 @@ export const POINT_OFFERS = [
     'offers': OFFERS
   },
 ];
-export const POINT_OFFERS_BY_TYPE = {
-  'type': 'taxi',
-  'offers': [1,2,3,5,4],
-};
+
