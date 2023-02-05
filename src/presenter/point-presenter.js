@@ -1,6 +1,7 @@
 import {render, replace, remove} from '../framework/render.js';
 import PointView from '../view/point-view';
 import EditPointView from '../view/edit-point-view';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -9,16 +10,17 @@ const Mode = {
 
 export default class PointPresenter {
   #renderContainer = null;
-
+  onDataChange = null;
   pointComponent = null;
   pointEditFormComponent = null;
 
   point = null;
   #mode = Mode.DEFAULT;
 
-  constructor({renderContainer, onModeChange}) {
+  constructor({renderContainer, onModeChange, onDataChange}) {
     this.#renderContainer = renderContainer;
     this.handleModeChange = onModeChange;
+    this.handleDataChange = onDataChange;
 
   }
 
@@ -33,7 +35,10 @@ export default class PointPresenter {
 
 
     this.pointEditFormComponent = new EditPointView({point: this.point,
-      onCloseBtnClick: this.handleFormSubmit});
+      onCloseBtnClick: this.handleFormClickCloseBtn,
+      onSubmitForm: this.handleFormSubmit,
+      handleDeleteClick: this.handleDeleteClick
+    });
 
     if (prevPointComponent === null || prevPointEditFormComponent === null) {
       render(this.pointComponent, this.#renderContainer);
@@ -84,8 +89,24 @@ export default class PointPresenter {
     this.replaceCardToForm();
   };
 
-  handleFormSubmit = () => {
+  handleFormClickCloseBtn = () => {
     this.pointEditFormComponent.reset(this.point);
     this.replaceFormToPoint();
   };
+
+  handleFormSubmit = (update) => {
+    this.handleDataChange (
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      update,);
+    this.replaceFormToPoint();
+  };
+
+  handleDeleteClick = (point) => {
+    this.handleDataChange (
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,);
+  };
+
 }

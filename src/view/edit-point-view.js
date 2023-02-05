@@ -122,12 +122,15 @@ function createEventEditFormTemplate(point) {
 export default class EditPointView extends AbstractStatefulView {
   onCloseBtnClick = null;
   datepicker = null;
+  onSubmitForm = null;
 
-  constructor({point, onCloseBtnClick}) {
+  constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick}) {
     super();
     this._setState(EditPointView.parsePointToState(point));
     this.handleCloseBtnClick = onCloseBtnClick;
     this._restoreHandlers();
+    this.onSubmitForm = onSubmitForm;
+    this.handleDeleteClick = handleDeleteClick;
   }
 
   startDateChangeHandler = ([userDate]) => {
@@ -191,8 +194,14 @@ export default class EditPointView extends AbstractStatefulView {
       this.changeDestinationHandlers(evt);
     });
 
-    document.querySelector('form').addEventListener('submit', (evt) => {
+    this.element.addEventListener('submit', (evt) => {
       evt.preventDefault();
+      this.onSubmitHandler();
+    });
+
+    this.element.querySelector('.event__reset-btn').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      this.onDeleteClickHandler();
     });
 
     this.setStartDatepicker();
@@ -210,6 +219,14 @@ export default class EditPointView extends AbstractStatefulView {
     );
   }
 
+  onSubmitHandler = () => {
+    this.onSubmitForm(EditPointView.parseStateToPoint(this._state));
+  };
+
+  onDeleteClickHandler = () => {
+    this.handleDeleteClick(EditPointView.parseStateToPoint(this._state));
+  };
+
   closeBtnClickHandler = () => {
     this.handleCloseBtnClick();
   };
@@ -226,9 +243,9 @@ export default class EditPointView extends AbstractStatefulView {
 
   changeDestinationHandlers(evt) {
     evt.preventDefault();
-    const newDEstination = POINT_DESTINATION.filter((pointOffers) => evt.target.value.includes(pointOffers.name));
+    const newDestination = POINT_DESTINATION.filter((pointOffers) => evt.target.value.includes(pointOffers.name));
     this.updateElement({
-      destination: newDEstination[0]
+      destination: newDestination[0]
     });
   }
 
