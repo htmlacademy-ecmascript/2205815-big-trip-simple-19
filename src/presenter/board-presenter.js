@@ -84,21 +84,29 @@ export class BoardPresenter {
 
     for (const point of this.points) {
       const offerIds = point.offers;
-      point.offers = this.#offerModel.getOfferById(offerIds);
-      point.destination = this.#destinationModel.getDestinationById(point.destination);
-      this.#renderPoint(point);
+      // point.offers = this.#offerModel.getOfferById(offerIds);
+      const destination = this.#destinationModel.getDestinationById(point.destination);
+      //console.log(destination);
+
+      //point.destination = this.#destinationModel.getDestinationById(point.destination);
+
+
+      const offers = this.#offerModel.getOfferById(offerIds);
+      //console.log(offers);
+      this.#renderPoint(point, offers, destination);
     }
 
     render(this.#pointContainerView, siteMainElement);
   }
 
 
-  #renderPoint(point) {
+  #renderPoint(point, offers, destination) {
     const pointPresenter = new PointPresenter({
       renderContainer: this.#pointContainerView.element,
       onModeChange: this.handleModeChange,
-      onDataChange: this.handleViewAction});
-    pointPresenter.init(point);
+      onDataChange: this.handleViewAction
+    });
+    pointPresenter.init(point, offers, destination);
     this.pointPresenter.set(point.id, pointPresenter);
   }
 

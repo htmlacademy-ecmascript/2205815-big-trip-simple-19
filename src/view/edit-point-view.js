@@ -18,8 +18,8 @@ const createOfferTemplate = (offers) =>
 
   offers.map(({id, title, price}) =>
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${id}" type="checkbox" name="event-offer-luggage" checked>
-      <label class="event__offer-label" for="event-offer-luggage-${id}">
+      <input class="event__offer-checkbox  visually-hidden" id=${id} type="checkbox" name="event-offer-luggage">
+      <label class="event__offer-label" for=${id}>
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${price}</span>
@@ -59,7 +59,7 @@ const createDestinationContainerTemplate = (destinations) =>
                 </section>`;
 
 function createEventEditFormTemplate(point) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, destination, offers} = point;
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers, destination} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
   const destinationName = destination.name;
@@ -124,13 +124,19 @@ export default class EditPointView extends AbstractStatefulView {
   datepicker = null;
   onSubmitForm = null;
 
-  constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick}) {
+
+  constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick, offers, destination}) {
     super();
-    this._setState(EditPointView.parsePointToState(point));
+    this.offers = offers;
+    this.destination = destination;
+    this._setState(EditPointView.parsePointToState(point, this.offers, this.destination));
     this.handleCloseBtnClick = onCloseBtnClick;
     this._restoreHandlers();
     this.onSubmitForm = onSubmitForm;
     this.handleDeleteClick = handleDeleteClick;
+    this.newOffers = [];
+    this.b = {...point, offers: offers, destination: destination};
+    console.log(this.b)
   }
 
   startDateChangeHandler = ([userDate]) => {
@@ -182,10 +188,11 @@ export default class EditPointView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event__type-group').addEventListener('change', (evt) => {
-      this.changeOffersHandlers(evt);
+      this.changeOffersTypeHandlers(evt);
     });
     this.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
-      this.reset(this.point);
+      console.log(this.b)
+      this.reset(this.b);
       evt.preventDefault();
       this.closeBtnClickHandler();
     });
@@ -204,6 +211,25 @@ export default class EditPointView extends AbstractStatefulView {
       this.onDeleteClickHandler();
     });
 
+
+    this.element.querySelector('.event__section--offers').addEventListener('click', (evt) => {
+      const id = evt.target.id;
+      const idNumber = Number(id);
+
+      if(idNumber === 0) {
+        return;
+      }
+      if (this.newOffers.includes(idNumber)){
+        const i = this.newOffers.indexOf(idNumber);
+        this.newOffers.splice(i, 1);
+
+      } else {
+        this.newOffers.push(idNumber);
+
+      }}
+
+    );
+    //console.log(this.newOffers);
     this.setStartDatepicker();
     this.setEndDatepicker();
   }
@@ -220,7 +246,7 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   onSubmitHandler = () => {
-    this.onSubmitForm(EditPointView.parseStateToPoint(this._state));
+    this.onSubmitForm(EditPointView.parseStateToPoint({...this._state, offers: this.newOffers, destination: this._state.destination.id}));
   };
 
   onDeleteClickHandler = () => {
@@ -231,7 +257,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.handleCloseBtnClick();
   };
 
-  changeOffersHandlers(evt) {
+  changeOffersTypeHandlers(evt) {
     evt.preventDefault();
     const newOffers = POINT_OFFERS.filter((pointOffers) => evt.target.value.includes(pointOffers.type));
     this.updateElement({
@@ -250,8 +276,8 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
 
-  static parsePointToState(point) {
-    return {...point};
+  static parsePointToState(point, offers, destination) {
+    return {...point, offers: offers, destination: destination};
   }
 
 
