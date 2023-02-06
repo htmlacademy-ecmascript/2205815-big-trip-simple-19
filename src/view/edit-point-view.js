@@ -59,6 +59,7 @@ const createDestinationContainerTemplate = (destinations) =>
                 </section>`;
 
 function createEventEditFormTemplate(point) {
+  console.log(point);
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers, destination} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
@@ -123,6 +124,7 @@ export default class EditPointView extends AbstractStatefulView {
   onCloseBtnClick = null;
   datepicker = null;
   onSubmitForm = null;
+  price = null;
 
 
   constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick, offers, destination}) {
@@ -136,7 +138,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.handleDeleteClick = handleDeleteClick;
     this.newOffers = [];
     this.b = {...point, offers: offers, destination: destination};
-    console.log(this.b)
+
   }
 
   startDateChangeHandler = ([userDate]) => {
@@ -191,7 +193,6 @@ export default class EditPointView extends AbstractStatefulView {
       this.changeOffersTypeHandlers(evt);
     });
     this.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
-      console.log(this.b)
       this.reset(this.b);
       evt.preventDefault();
       this.closeBtnClickHandler();
@@ -219,21 +220,27 @@ export default class EditPointView extends AbstractStatefulView {
       if(idNumber === 0) {
         return;
       }
+
       if (this.newOffers.includes(idNumber)){
         const i = this.newOffers.indexOf(idNumber);
         this.newOffers.splice(i, 1);
 
       } else {
         this.newOffers.push(idNumber);
+      }
+    });
 
-      }}
+    this.element.querySelector('#event-price-1').addEventListener('change', (evt) => {
+      this.priceHandler(evt);
+    });
 
-    );
-    //console.log(this.newOffers);
     this.setStartDatepicker();
     this.setEndDatepicker();
   }
 
+  changePriceHandler(evt) {
+    this.price = evt.target.value;
+  }
 
   get template() {
     return createEventEditFormTemplate(this._state);
@@ -246,7 +253,7 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   onSubmitHandler = () => {
-    this.onSubmitForm(EditPointView.parseStateToPoint({...this._state, offers: this.newOffers, destination: this._state.destination.id}));
+    this.onSubmitForm(EditPointView.parseStateToPoint({...this._state, offers: this.newOffers, destination: this._state.destination.id, base_price: this.price}));
   };
 
   onDeleteClickHandler = () => {

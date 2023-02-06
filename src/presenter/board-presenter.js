@@ -122,6 +122,7 @@ export class BoardPresenter {
   sortByPriceHandler = () => {
     this.clearPointList();
     const points = Array.from(this.#pointModel.getPointByPrice());
+    console.log(points);
     for (const point of points) {
       this.#renderPoint(point);
     }
