@@ -99,6 +99,7 @@ export default class PointPresenter {
 
   handleFormClickCloseBtn = (evt) => {
     evt.preventDefault();
+    console.log('ggg');
     //this.pointEditFormComponent.reset(this.point);
     this.replaceFormToPoint();
   };

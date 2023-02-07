@@ -9,15 +9,21 @@ import 'flatpickr/dist/flatpickr.min.css';
 const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const destinationType = ['Praga', 'St.Peterburg', 'Portu', 'London', 'Osaka', 'Rim', 'Barselona', 'Tokyo'];
 
-const createDestinationTypeTemplate = (destinationList) =>
-  destinationList.map((element) =>
-    `<option value=${element}></option>
+  const isSelected = (selectedOffers, id) => {
+    for(selectedOffers of id) {
+      if (selectedOffers.offers.id === id) {
+        return true;
+      }
+    }
+  };
+
+function createDestinationTypeTemplate(destinationList) {
+  return destinationList.map((element) => `<option value=${element}></option>
  `).join('');
+}
 
-const createOfferTemplate = (offers) =>
-
-  offers.map(({id, title, price}) =>
-    `<div class="event__offer-selector">
+function createOfferTemplate(offers) {
+  return offers.map(({ id, title, price }) => `<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" id=${id} type="checkbox" name="event-offer-luggage">
       <label class="event__offer-label" for=${id}>
         <span class="event__offer-title">${title}</span>
@@ -25,6 +31,7 @@ const createOfferTemplate = (offers) =>
         <span class="event__offer-price">${price}</span>
       </label>
     </div>`).join('');
+}
 
 export const createOfferContainerTemplate = (offers) =>
   `<section class="event__section  event__section--offers">
@@ -59,12 +66,23 @@ const createDestinationContainerTemplate = (destinations) =>
                 </section>`;
 
 function createEventEditFormTemplate(point) {
-  console.log(point);
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers, destination} = point;
+  //console.log(offers);
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
   const destinationName = destination.name;
 
+  const offerForType = POINT_OFFERS.find((pointOffer) => pointOffer.type === point.type) || [];
+  console.log(offerForType.offers);
+
+  const isSelected = (selectedOffers, id) => {
+    for(selectedOffers of id) {
+      if (selectedOffers.offers.id === id) {
+        return true;
+      }
+    }
+  };
+  //console.log(isSelected);
   return `
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -124,12 +142,12 @@ export default class EditPointView extends AbstractStatefulView {
   onCloseBtnClick = null;
   datepicker = null;
   onSubmitForm = null;
-  price = null;
 
 
   constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick, offers, destination}) {
     super();
     this.offers = offers;
+    this.price = offers.base_price;
     this.destination = destination;
     this._setState(EditPointView.parsePointToState(point, this.offers, this.destination));
     this.handleCloseBtnClick = onCloseBtnClick;
@@ -193,7 +211,7 @@ export default class EditPointView extends AbstractStatefulView {
       this.changeOffersTypeHandlers(evt);
     });
     this.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
-      this.reset(this.b);
+      this.reset(this.point);
       evt.preventDefault();
       this.closeBtnClickHandler();
     });
@@ -231,16 +249,13 @@ export default class EditPointView extends AbstractStatefulView {
     });
 
     this.element.querySelector('#event-price-1').addEventListener('change', (evt) => {
-      this.priceHandler(evt);
+      this.price = evt.target.value;
     });
 
     this.setStartDatepicker();
     this.setEndDatepicker();
   }
 
-  changePriceHandler(evt) {
-    this.price = evt.target.value;
-  }
 
   get template() {
     return createEventEditFormTemplate(this._state);
@@ -266,9 +281,9 @@ export default class EditPointView extends AbstractStatefulView {
 
   changeOffersTypeHandlers(evt) {
     evt.preventDefault();
-    const newOffers = POINT_OFFERS.filter((pointOffers) => evt.target.value.includes(pointOffers.type));
+    //const newOffers = POINT_OFFERS.filter((pointOffers) => evt.target.value.includes(pointOffers.type));
     this.updateElement({
-      offers: newOffers[0].offers,
+      //offers: newOffers[0].offers,
       type: evt.target.value
     });
 
