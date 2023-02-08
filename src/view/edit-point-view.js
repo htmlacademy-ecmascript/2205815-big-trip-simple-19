@@ -9,28 +9,37 @@ import 'flatpickr/dist/flatpickr.min.css';
 const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const destinationType = ['Praga', 'St.Peterburg', 'Portu', 'London', 'Osaka', 'Rim', 'Barselona', 'Tokyo'];
 
-const createDestinationTypeTemplate = (destinationList) =>
-  destinationList.map((element) =>
-    `<option value=${element}></option>
+
+function createDestinationTypeTemplate(destinationList) {
+  return destinationList.map((element) => `<option value=${element}></option>
  `).join('');
+}
 
-const createOfferTemplate = (offers) =>
+function createOfferTemplate(offers, selectedOffers) {
 
-  offers.map(({id, title, price}) =>
-    `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${id}" type="checkbox" name="event-offer-luggage" checked>
-      <label class="event__offer-label" for="event-offer-luggage-${id}">
+  const isSelected = (selectOffers, id) => {
+    for(const selectedOfferId of selectOffers) {
+      if (selectedOfferId.id === id) {
+        return true;
+      }
+    }
+  };
+
+  return offers.map(({ id, title, price }) => `<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id=${id} type="checkbox" name="event-offer-luggage" ${isSelected(selectedOffers, id) ? 'checked' : ''}>
+      <label class="event__offer-label" for=${id}>
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${price}</span>
       </label>
     </div>`).join('');
+}
 
-export const createOfferContainerTemplate = (offers) =>
+export const createOfferContainerTemplate = (offers, selectedOffers) =>
   `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
-          ${createOfferTemplate(offers)}
+          ${createOfferTemplate(offers, selectedOffers)}
           </section>`;
 
 const createTypeEventTemplate = (offersType) =>
@@ -59,11 +68,16 @@ const createDestinationContainerTemplate = (destinations) =>
                 </section>`;
 
 function createEventEditFormTemplate(point) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, destination, offers} = point;
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers, destination} = point;
+  //console.log(point);
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
   const destinationName = destination.name;
 
+  const offerType = POINT_OFFERS.find((pointOffer) => pointOffer.type === point.type) || [];
+  const offersByType = offerType.offers;
+
+  const selectedOffers = offers;
   return `
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -114,7 +128,7 @@ function createEventEditFormTemplate(point) {
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
-    ${createOfferContainerTemplate(offers)}
+    ${createOfferContainerTemplate(offersByType, selectedOffers)}
     ${createDestinationContainerTemplate(destination)}
     </form>`;
 }
@@ -122,12 +136,24 @@ function createEventEditFormTemplate(point) {
 export default class EditPointView extends AbstractStatefulView {
   onCloseBtnClick = null;
   datepicker = null;
+  onSubmitForm = null;
 
-  constructor({point, onCloseBtnClick}) {
+
+  constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick, offers, destination}) {
     super();
-    this._setState(EditPointView.parsePointToState(point));
+    this.point = point;
+    this.offers = offers;
+    this.price = offers.base_price;
+    this.destination = destination;
+    this._setState(EditPointView.parsePointToState(point, this.offers, this.destination));
     this.handleCloseBtnClick = onCloseBtnClick;
     this._restoreHandlers();
+    this.onSubmitForm = onSubmitForm;
+    this.handleDeleteClick = handleDeleteClick;
+    this.newOffers = [];
+    for (const offer of this.offers) {
+      this.newOffers.push(offer.id);
+    }
   }
 
   startDateChangeHandler = ([userDate]) => {
@@ -179,10 +205,9 @@ export default class EditPointView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event__type-group').addEventListener('change', (evt) => {
-      this.changeOffersHandlers(evt);
+      this.changeOffersTypeHandlers(evt);
     });
     this.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
-      this.reset(this.point);
       evt.preventDefault();
       this.closeBtnClickHandler();
     });
@@ -191,14 +216,69 @@ export default class EditPointView extends AbstractStatefulView {
       this.changeDestinationHandlers(evt);
     });
 
-    document.querySelector('form').addEventListener('submit', (evt) => {
+    this.element.addEventListener('submit', (evt) => {
       evt.preventDefault();
+      this.onSubmitHandler();
+    });
+
+    this.element.querySelector('.event__reset-btn').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      this.onDeleteClickHandler();
+    });
+
+    this.element.querySelector('.event__section--offers').addEventListener('click', (evt) => {
+      this.onOfferClickHandler(evt);
+    });
+
+    this.element.querySelector('#event-price-1').addEventListener('change', (evt) => {
+      this.onChangePriceHandler(evt);
+    });
+
+    this.element.querySelector('#event-start-time-1').addEventListener('change', (evt) => {
+      this.onChangeDateFromHandler(evt);
+    });
+
+    this.element.querySelector('#event-end-time-1').addEventListener('change', (evt) => {
+      this.onChangeDateToHandler(evt);
     });
 
     this.setStartDatepicker();
     this.setEndDatepicker();
   }
 
+  onChangeDateToHandler(evt) {
+    this.updateElement({
+      date_to: evt.target.value
+    });
+  }
+
+  onChangeDateFromHandler(evt) {
+    this.updateElement({
+      date_from: evt.target.value
+    });
+  }
+
+  onChangePriceHandler(evt) {
+    evt.preventDefault();
+    this.updateElement({
+      base_price: evt.target.value
+    });
+  }
+
+  onOfferClickHandler(evt) {
+    const id = evt.target.id;
+    const idNumber = Number(id);
+    if(idNumber === 0) {
+      return;
+    }
+    if (this.newOffers.includes(idNumber)){
+      const i = this.newOffers.indexOf(idNumber);
+      this.newOffers.splice(i, 1);
+    } else {
+      this.newOffers.push(idNumber);
+    }
+
+  }
 
   get template() {
     return createEventEditFormTemplate(this._state);
@@ -210,31 +290,39 @@ export default class EditPointView extends AbstractStatefulView {
     );
   }
 
+  onSubmitHandler = () => {
+    this.onSubmitForm(EditPointView.parseStateToPoint({...this._state, offers: this.newOffers, destination: this._state.destination.id}));
+  };
+
+  onDeleteClickHandler = () => {
+    this.handleDeleteClick(EditPointView.parseStateToPoint(this._state));
+  };
+
   closeBtnClickHandler = () => {
+    console.log('ggg');
     this.handleCloseBtnClick();
   };
 
-  changeOffersHandlers(evt) {
+  changeOffersTypeHandlers(evt) {
     evt.preventDefault();
-    const newOffers = POINT_OFFERS.filter((pointOffers) => evt.target.value.includes(pointOffers.type));
     this.updateElement({
-      offers: newOffers[0].offers,
-      type: evt.target.value
+      type: evt.target.value,
+      offers: []
     });
 
   }
 
   changeDestinationHandlers(evt) {
     evt.preventDefault();
-    const newDEstination = POINT_DESTINATION.filter((pointOffers) => evt.target.value.includes(pointOffers.name));
+    const newDestination = POINT_DESTINATION.filter((pointOffers) => evt.target.value.includes(pointOffers.name));
     this.updateElement({
-      destination: newDEstination[0]
+      destination: newDestination[0]
     });
   }
 
 
-  static parsePointToState(point) {
-    return {...point};
+  static parsePointToState(point, offers, destination) {
+    return {...point, offers: offers, destination: destination};
   }
 
 
