@@ -4,6 +4,10 @@ import Observable from '../framework/observable.js';
 export class PointModel extends Observable {
   #points = mockPoints;
 
+  get points() {
+    return this.#points;
+  }
+
   getPoint() {
     const dateFrom = 'date_from';
     this.#points.sort((a, b) => a[dateFrom] > b[dateFrom] ? 1 : -1);

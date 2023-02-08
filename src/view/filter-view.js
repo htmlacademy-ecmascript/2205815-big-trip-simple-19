@@ -20,7 +20,26 @@ function createFilterTeamplate() {
 
 export default class FilterView extends AbstractView {
 
-  get template() {
-    return createFilterTeamplate();
+  #filters = null;
+  #currentFilter = null;
+  #handleFilterTypeChange = null;
+
+  constructor({filters, currentFilterType, onFilterTypeChange}) {
+    super();
+    this.#filters = filters;
+    this.#currentFilter = currentFilterType;
+    this.#handleFilterTypeChange = onFilterTypeChange;
+
+    this.element.addEventListener('change', this.#filterTypeChangeHandler);
   }
+
+  get template() {
+    return createFilterTeamplate(this.#filters, this.#currentFilter);
+  }
+
+  #filterTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFilterTypeChange(evt.target.value);
+  };
+
 }

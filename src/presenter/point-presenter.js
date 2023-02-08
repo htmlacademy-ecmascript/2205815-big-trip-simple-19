@@ -28,7 +28,6 @@ export default class PointPresenter {
     this.offers = offers;
     this.destination = destination;
 
-
     const prevPointComponent = this.pointComponent;
     const prevPointEditFormComponent = this.pointEditFormComponent;
 
@@ -67,7 +66,8 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
-      this.pointEditFormComponent.reset(this.point);
+      //this.pointEditFormComponent.reset(this.point);
+
       this.replaceFormToPoint();
     }
   }
@@ -97,9 +97,8 @@ export default class PointPresenter {
     this.replaceCardToForm();
   };
 
-  handleFormClickCloseBtn = (evt) => {
-    evt.preventDefault();
-    console.log('ggg');
+  handleFormClickCloseBtn = () => {
+    //evt.preventDefault();
     //this.pointEditFormComponent.reset(this.point);
     this.replaceFormToPoint();
   };

@@ -20,6 +20,16 @@ export const UpdateType = {
 };
 
 export const FilterType = {
-  EVERYTHING: 'EVERYTHING',
-  FUTURE: 'FUTURE',
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  ALL: 'all'
 };
+
+const today = new Date();
+
+export const filter = {
+  [FilterType.ALL]: (points) => points.filter((point) => point),
+  [FilterType.EVERYTHING]: (points) => points.filter((point) => point),
+  [FilterType.FUTURE]: (points) => points.filter((point) => new Date(point.date_to) > today)
+};
+

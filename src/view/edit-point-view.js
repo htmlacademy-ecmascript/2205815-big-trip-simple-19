@@ -9,22 +9,24 @@ import 'flatpickr/dist/flatpickr.min.css';
 const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const destinationType = ['Praga', 'St.Peterburg', 'Portu', 'London', 'Osaka', 'Rim', 'Barselona', 'Tokyo'];
 
-  const isSelected = (selectedOffers, id) => {
-    for(selectedOffers of id) {
-      if (selectedOffers.offers.id === id) {
-        return true;
-      }
-    }
-  };
 
 function createDestinationTypeTemplate(destinationList) {
   return destinationList.map((element) => `<option value=${element}></option>
  `).join('');
 }
 
-function createOfferTemplate(offers) {
+function createOfferTemplate(offers, selectedOffers) {
+
+  const isSelected = (selectOffers, id) => {
+    for(const selectedOfferId of selectOffers) {
+      if (selectedOfferId.id === id) {
+        return true;
+      }
+    }
+  };
+
   return offers.map(({ id, title, price }) => `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id=${id} type="checkbox" name="event-offer-luggage">
+      <input class="event__offer-checkbox  visually-hidden" id=${id} type="checkbox" name="event-offer-luggage" ${isSelected(selectedOffers, id) ? 'checked' : ''}>
       <label class="event__offer-label" for=${id}>
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
@@ -33,11 +35,11 @@ function createOfferTemplate(offers) {
     </div>`).join('');
 }
 
-export const createOfferContainerTemplate = (offers) =>
+export const createOfferContainerTemplate = (offers, selectedOffers) =>
   `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
-          ${createOfferTemplate(offers)}
+          ${createOfferTemplate(offers, selectedOffers)}
           </section>`;
 
 const createTypeEventTemplate = (offersType) =>
@@ -67,22 +69,15 @@ const createDestinationContainerTemplate = (destinations) =>
 
 function createEventEditFormTemplate(point) {
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers, destination} = point;
-  //console.log(offers);
+  //console.log(point);
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
   const destinationName = destination.name;
 
-  const offerForType = POINT_OFFERS.find((pointOffer) => pointOffer.type === point.type) || [];
-  console.log(offerForType.offers);
+  const offerType = POINT_OFFERS.find((pointOffer) => pointOffer.type === point.type) || [];
+  const offersByType = offerType.offers;
 
-  const isSelected = (selectedOffers, id) => {
-    for(selectedOffers of id) {
-      if (selectedOffers.offers.id === id) {
-        return true;
-      }
-    }
-  };
-  //console.log(isSelected);
+  const selectedOffers = offers;
   return `
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -133,7 +128,7 @@ function createEventEditFormTemplate(point) {
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
-    ${createOfferContainerTemplate(offers)}
+    ${createOfferContainerTemplate(offersByType, selectedOffers)}
     ${createDestinationContainerTemplate(destination)}
     </form>`;
 }
@@ -146,6 +141,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick, offers, destination}) {
     super();
+    this.point = point;
     this.offers = offers;
     this.price = offers.base_price;
     this.destination = destination;
@@ -155,8 +151,9 @@ export default class EditPointView extends AbstractStatefulView {
     this.onSubmitForm = onSubmitForm;
     this.handleDeleteClick = handleDeleteClick;
     this.newOffers = [];
-    this.b = {...point, offers: offers, destination: destination};
-
+    for (const offer of this.offers) {
+      this.newOffers.push(offer.id);
+    }
   }
 
   startDateChangeHandler = ([userDate]) => {
@@ -211,7 +208,6 @@ export default class EditPointView extends AbstractStatefulView {
       this.changeOffersTypeHandlers(evt);
     });
     this.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
-      this.reset(this.point);
       evt.preventDefault();
       this.closeBtnClickHandler();
     });
@@ -230,32 +226,59 @@ export default class EditPointView extends AbstractStatefulView {
       this.onDeleteClickHandler();
     });
 
-
     this.element.querySelector('.event__section--offers').addEventListener('click', (evt) => {
-      const id = evt.target.id;
-      const idNumber = Number(id);
-
-      if(idNumber === 0) {
-        return;
-      }
-
-      if (this.newOffers.includes(idNumber)){
-        const i = this.newOffers.indexOf(idNumber);
-        this.newOffers.splice(i, 1);
-
-      } else {
-        this.newOffers.push(idNumber);
-      }
+      this.onOfferClickHandler(evt);
     });
 
     this.element.querySelector('#event-price-1').addEventListener('change', (evt) => {
-      this.price = evt.target.value;
+      this.onChangePriceHandler(evt);
+    });
+
+    this.element.querySelector('#event-start-time-1').addEventListener('change', (evt) => {
+      this.onChangeDateFromHandler(evt);
+    });
+
+    this.element.querySelector('#event-end-time-1').addEventListener('change', (evt) => {
+      this.onChangeDateToHandler(evt);
     });
 
     this.setStartDatepicker();
     this.setEndDatepicker();
   }
 
+  onChangeDateToHandler(evt) {
+    this.updateElement({
+      date_to: evt.target.value
+    });
+  }
+
+  onChangeDateFromHandler(evt) {
+    this.updateElement({
+      date_from: evt.target.value
+    });
+  }
+
+  onChangePriceHandler(evt) {
+    evt.preventDefault();
+    this.updateElement({
+      base_price: evt.target.value
+    });
+  }
+
+  onOfferClickHandler(evt) {
+    const id = evt.target.id;
+    const idNumber = Number(id);
+    if(idNumber === 0) {
+      return;
+    }
+    if (this.newOffers.includes(idNumber)){
+      const i = this.newOffers.indexOf(idNumber);
+      this.newOffers.splice(i, 1);
+    } else {
+      this.newOffers.push(idNumber);
+    }
+
+  }
 
   get template() {
     return createEventEditFormTemplate(this._state);
@@ -268,7 +291,7 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   onSubmitHandler = () => {
-    this.onSubmitForm(EditPointView.parseStateToPoint({...this._state, offers: this.newOffers, destination: this._state.destination.id, base_price: this.price}));
+    this.onSubmitForm(EditPointView.parseStateToPoint({...this._state, offers: this.newOffers, destination: this._state.destination.id}));
   };
 
   onDeleteClickHandler = () => {
@@ -276,15 +299,15 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   closeBtnClickHandler = () => {
+    console.log('ggg');
     this.handleCloseBtnClick();
   };
 
   changeOffersTypeHandlers(evt) {
     evt.preventDefault();
-    //const newOffers = POINT_OFFERS.filter((pointOffers) => evt.target.value.includes(pointOffers.type));
     this.updateElement({
-      //offers: newOffers[0].offers,
-      type: evt.target.value
+      type: evt.target.value,
+      offers: []
     });
 
   }
