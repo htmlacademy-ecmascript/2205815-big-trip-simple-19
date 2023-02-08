@@ -91,7 +91,6 @@ export class BoardPresenter {
 
   #renderBoard() {
     this.points = this.getPoint();
-    console.log(this.filterType);
     if (this.points.length === 0 && this.filterType === 'future') {
       this.renderNoFuturePointsList();
       return;

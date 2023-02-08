@@ -7,7 +7,8 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-const destinationType = ['Praga', 'St.Peterburg', 'Portu', 'London', 'Osaka', 'Rim', 'Barselona', 'Tokyo'];
+//const destinationType = ['Praga', 'St.Peterburg', 'Portu', 'London', 'Osaka', 'Rim', 'Barselona', 'Tokyo'];
+const destinationType = POINT_DESTINATION.map((destination) => destination.name);
 
 
 function createDestinationTypeTemplate(destinationList) {
@@ -16,7 +17,7 @@ function createDestinationTypeTemplate(destinationList) {
 }
 
 function createOfferTemplate(offers, selectedOffers) {
-
+  console.log(selectedOffers)
   const isSelected = (selectOffers, id) => {
     for(const selectedOfferId of selectOffers) {
       if (selectedOfferId.id === id) {
@@ -26,6 +27,7 @@ function createOfferTemplate(offers, selectedOffers) {
   };
 
   return offers.map(({ id, title, price }) => `<div class="event__offer-selector">
+  ${console.log({ id, title, price })}
       <input class="event__offer-checkbox  visually-hidden" id=${id} type="checkbox" name="event-offer-luggage" ${isSelected(selectedOffers, id) ? 'checked' : ''}>
       <label class="event__offer-label" for=${id}>
         <span class="event__offer-title">${title}</span>
@@ -36,6 +38,7 @@ function createOfferTemplate(offers, selectedOffers) {
 }
 
 export const createOfferContainerTemplate = (offers, selectedOffers) =>
+
   `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
@@ -50,6 +53,7 @@ const createTypeEventTemplate = (offersType) =>
       </div>`).join('');
 
 const createDestinationTemplate = (destination) => {
+  console.log(destination)
   const {description: descriptionPoint, pictures:[{src, description: descriptionPhoto}]} = destination;
 
   return `<p class="event__destination-description">${descriptionPoint}</p>
@@ -68,16 +72,13 @@ const createDestinationContainerTemplate = (destinations) =>
                 </section>`;
 
 function createEventEditFormTemplate(point) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers, destination} = point;
-  //console.log(point);
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers: selectedOffers, destination} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
-  const destinationName = destination.name;
 
-  const offerType = POINT_OFFERS.find((pointOffer) => pointOffer.type === point.type) || [];
-  const offersByType = offerType.offers;
+  const offerType = POINT_OFFERS.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
+  const destinationDate = POINT_DESTINATION.find((dest) => dest.id === destination);
 
-  const selectedOffers = offers;
   return `
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -100,7 +101,7 @@ function createEventEditFormTemplate(point) {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type} to
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destinationName} list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destinationDate.name} list="destination-list-1">
         <datalist id="destination-list-1">
         ${createDestinationTypeTemplate(destinationType)}
         </datalist>
@@ -128,8 +129,8 @@ function createEventEditFormTemplate(point) {
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
-    ${createOfferContainerTemplate(offersByType, selectedOffers)}
-    ${createDestinationContainerTemplate(destination)}
+    ${createOfferContainerTemplate(offerType, selectedOffers)}
+    ${createDestinationContainerTemplate(destinationDate)}
     </form>`;
 }
 
@@ -139,21 +140,17 @@ export default class EditPointView extends AbstractStatefulView {
   onSubmitForm = null;
 
 
-  constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick, offers, destination}) {
+  constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick, offers}) {
     super();
     this.point = point;
     this.offers = offers;
     this.price = offers.base_price;
-    this.destination = destination;
-    this._setState(EditPointView.parsePointToState(point, this.offers, this.destination));
+    //this.destination = destination;
+    this._setState(EditPointView.parsePointToState(this.point));
     this.handleCloseBtnClick = onCloseBtnClick;
     this._restoreHandlers();
     this.onSubmitForm = onSubmitForm;
     this.handleDeleteClick = handleDeleteClick;
-    this.newOffers = [];
-    for (const offer of this.offers) {
-      this.newOffers.push(offer.id);
-    }
   }
 
   startDateChangeHandler = ([userDate]) => {
@@ -271,11 +268,11 @@ export default class EditPointView extends AbstractStatefulView {
     if(idNumber === 0) {
       return;
     }
-    if (this.newOffers.includes(idNumber)){
-      const i = this.newOffers.indexOf(idNumber);
-      this.newOffers.splice(i, 1);
+    if (this._state.offers.includes(idNumber)){
+      const i = this._state.offers.indexOf(idNumber);
+      this._state.offers.splice(i, 1);
     } else {
-      this.newOffers.push(idNumber);
+      this._state.offers.push(idNumber);
     }
 
   }
@@ -291,7 +288,7 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   onSubmitHandler = () => {
-    this.onSubmitForm(EditPointView.parseStateToPoint({...this._state, offers: this.newOffers, destination: this._state.destination.id}));
+    this.onSubmitForm(EditPointView.parseStateToPoint({...this._state, offers: this.newOffers}));
   };
 
   onDeleteClickHandler = () => {
@@ -299,7 +296,7 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   closeBtnClickHandler = () => {
-    console.log('ggg');
+    this.reset(this.point);
     this.handleCloseBtnClick();
   };
 
@@ -314,15 +311,14 @@ export default class EditPointView extends AbstractStatefulView {
 
   changeDestinationHandlers(evt) {
     evt.preventDefault();
-    const newDestination = POINT_DESTINATION.filter((pointOffers) => evt.target.value.includes(pointOffers.name));
+    const newDestination = POINT_DESTINATION.find((destination) => destination.name === evt.target.value);
     this.updateElement({
-      destination: newDestination[0]
+      destination: newDestination.id
     });
   }
 
-
-  static parsePointToState(point, offers, destination) {
-    return {...point, offers: offers, destination: destination};
+  static parsePointToState(point) {
+    return {...point};
   }
 
 
