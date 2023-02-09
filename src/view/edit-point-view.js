@@ -96,7 +96,7 @@ function createEventEditFormTemplate(point) {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type} to
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destinationDate.name} list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destinationDate.name} list="destination-list-1" required>
         <datalist id="destination-list-1">
         ${createDestinationTypeTemplate(destinationType)}
         </datalist>
@@ -111,11 +111,11 @@ function createEventEditFormTemplate(point) {
       </div>
 
       <div class="event__field-group  event__field-group--price">
-        <label class="event__label" for="event-price-1">
+        <label class="event__label" for="event-price-1" >
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" pattern="^[ 0-9]+$" value=${basePrice}>
+        <input class="event__input  event__input--price" id="event-price-1" type="number"  name="event-price" value="${basePrice}" required>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -137,7 +137,6 @@ export default class EditPointView extends AbstractStatefulView {
 
   constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick}) {
     super();
-    //console.log(destination)
     this.point = point;
     this._setState(EditPointView.parsePointToState(point));
     this.handleCloseBtnClick = onCloseBtnClick;

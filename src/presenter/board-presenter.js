@@ -21,9 +21,9 @@ export class BoardPresenter {
   currentSortType = SortType.DATE;
   filterType = FilterType.ALL;
   noFuturePointList = null;
-  newPointPresenter = null;
+  //newPointPresenter = null;
 
-  constructor({renderContainer, pointModel, offerModel, destinationModel, filterModel}) {
+  constructor({renderContainer, pointModel, offerModel, destinationModel, filterModel, onNewPointDestroy}) {
     this.#renderContainer = renderContainer;
     this.#pointModel = pointModel;
     this.#offerModel = offerModel;
@@ -31,13 +31,19 @@ export class BoardPresenter {
     this.filterModel = filterModel;
     this.#pointModel.addObserver(this.handleModelEvent);
     this.filterModel.addObserver(this.handleModelEvent);
-    /*
+
     this.newPointPresenter = new NewPointPresenter({
-      taskListContainer: this.newPointPresenter.element,
+      pointListContainer: this.#pointContainerView.element,
       onDataChange: this.handleViewAction,
-      onDestroy: onNewTaskDestroy
+      onDestroy: onNewPointDestroy
     });
-*/
+
+  }
+
+  createPoint() {
+    this.currentSortType = SortType.DEFAULT;
+    this.filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
+    this.newPointPresenter.init();
   }
 
   getPoint() {
@@ -72,7 +78,6 @@ export class BoardPresenter {
         this.pointPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-
         this.clearPointList();
         this.#renderBoard();
         break;
@@ -154,6 +159,7 @@ export class BoardPresenter {
   }
 
   clearPointList() {
+    this.newPointPresenter.destroy();
     this.pointPresenter.forEach((presenter) => presenter.destroy());
     this.pointPresenter.clear();
     if(this.noPointList){
@@ -165,6 +171,7 @@ export class BoardPresenter {
   }
 
   handleModeChange = () => {
+    this.newPointPresenter.destroy();
     this.pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
