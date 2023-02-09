@@ -1,17 +1,23 @@
-import {mockPoints} from '../mock/mock-points.js';
+import {UpdateType} from '../const.js';
 import Observable from '../framework/observable.js';
 
 export class PointModel extends Observable {
-  #points = mockPoints;
+  #points = [];
   pointsApiService = null;
 
   constructor({pointsApiService}) {
     super();
     this.pointsApiService = pointsApiService;
-    this.pointsApiService.points.then((points) => {
-      console.log(points);
-    });
+  }
 
+  async init() {
+    try {
+      const points = await this.pointsApiService.points;
+      this.#points = points.map(this.adaptToClient);
+    } catch(err) {
+      this.#points = [];
+    }
+    this._notify(UpdateType.INIT);
   }
 
   get points() {
@@ -70,4 +76,20 @@ export class PointModel extends Observable {
     this._notify(updateType);
   }
 
+  adaptToClient(point) {
+    const adaptedPoint = {...point,
+      dueDate: point['due_date'] !== null ? new Date(point['due_date']) : point['due_date'], // На клиенте дата хранится как экземпляр Date
+      //isArchive: point['is_archived'],
+      //isFavorite: point['is_favorite'],
+      //repeating: point['repeating_days'],
+    };
+
+    // Ненужные ключи мы удаляем
+    //delete adaptedTask['due_date'];
+    //delete adaptedTask['is_archived'];
+    //delete adaptedTask['is_favorite'];
+    //delete adaptedTask['repeating_days'];
+
+    return adaptedPoint;
+  }
 }

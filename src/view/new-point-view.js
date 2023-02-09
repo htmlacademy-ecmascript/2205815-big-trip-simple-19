@@ -61,9 +61,6 @@ const createTypeEventTemplate = (offersType) =>
       </div>`).join('');
 
 const createDestinationTemplate = (destination) => {
-  if(destination.name === '') {
-    return;
-  }
   const {description: descriptionPoint, pictures:[{src, description: descriptionPhoto}]} = destination;
 
   return `<p class="event__destination-description">${descriptionPoint}</p>
@@ -75,17 +72,16 @@ const createDestinationTemplate = (destination) => {
         </div>`;
 };
 
-const createDestinationContainerTemplate = (destinations) => {
-  if(destinations.name === '') {
-    return;
-  }
-  return `<section class="event__section  event__section--destination">
+const createDestinationContainerTemplate = (destinations) =>
+  `<section class="event__section  event__section--destination">
                   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                   ${createDestinationTemplate(destinations)}
                 </section>`;
-};
+
+
 function createNewFormFormTemplate(point) {
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers: selectedOffers, destination} = point;
+  console.log(selectedOffers);
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
   const offerByType = POINT_OFFERS.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
@@ -137,13 +133,12 @@ function createNewFormFormTemplate(point) {
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
-      <button class="event__rollup-btn" type="button">
+      <button class="event__reset-btn" type="reset">Cancel</button>
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
     ${createOfferContainerTemplate(offerByType, selectedOffers)}
-    ${createDestinationContainerTemplate(destinationDate)}
+    ${destinationDate.name === '' ? '' : createDestinationContainerTemplate(destinationDate)}
     </form>`;
 }
 
@@ -261,7 +256,6 @@ export default class NewPointView extends AbstractStatefulView {
   }
 
   onChangePriceHandler(evt) {
-    evt.preventDefault();
     this.updateElement({
       base_price: evt.target.value
     });

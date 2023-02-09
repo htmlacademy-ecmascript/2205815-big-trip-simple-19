@@ -1,4 +1,4 @@
-import {remove, render} from '../framework/render.js';
+import {remove, render, RenderPosition} from '../framework/render.js';
 import EmptyListView from '../view/empty-list-view';
 import SortView from '../view/sort-view';
 import PointPresenter from './point-presenter.js';
@@ -6,6 +6,7 @@ import PointContainerView from '../view/point-container-view';
 import {SortType, UpdateType, UserAction, filter, FilterType} from '../const.js';
 import NoFuturePoint from '../view/no-future-point-view.js';
 import NewPointPresenter from './new-point-presenter.js';
+import LoadingView from '../view/loading-view.js';
 
 
 const siteMainElement = document.querySelector('.trip-events');
@@ -14,20 +15,23 @@ export class BoardPresenter {
   #renderContainer = null;
   #pointModel = null;
   #offerModel = null;
-  #destinationModel = null;
+  //#destinationModel = null;
   pointPresenter = new Map();
   #pointContainerView = new PointContainerView();
+  #loadingComponent = new LoadingView();
   noPointList = null;
   currentSortType = SortType.DATE;
   filterType = FilterType.ALL;
+  #isLoading = true;
   noFuturePointList = null;
-  //newPointPresenter = null;
+  newPointPresenter = null;
+
 
   constructor({renderContainer, pointModel, offerModel, destinationModel, filterModel, onNewPointDestroy}) {
     this.#renderContainer = renderContainer;
     this.#pointModel = pointModel;
     this.#offerModel = offerModel;
-    this.#destinationModel = destinationModel;
+    this.destinationModel = destinationModel;
     this.filterModel = filterModel;
     this.#pointModel.addObserver(this.handleModelEvent);
     this.filterModel.addObserver(this.handleModelEvent);
@@ -85,6 +89,11 @@ export class BoardPresenter {
         this.clearPointList();
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
   };
 
@@ -95,7 +104,18 @@ export class BoardPresenter {
   }
 
   #renderBoard() {
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     this.points = this.getPoint();
+
+    this.destinations = this.destinationModel.destinations;
+    this.offers = this.#offerModel.offers;
+    console.log(this.offers, this.destinations);
+
     if (this.points.length === 0 && this.filterType === 'future') {
       this.renderNoFuturePointsList();
       return;
@@ -107,10 +127,10 @@ export class BoardPresenter {
     }
 
     for (const point of this.points) {
-      const offerIds = point.offers;
-      const destination = this.#destinationModel.getDestinationById(point.destination);
-      const offers = this.#offerModel.getOfferById(offerIds);
-      this.#renderPoint(point, offers, destination);
+      //const offerIds = point.offers;
+      //const destination = this.#destinationModel.getDestinationById(point.destination);
+      //const offers = this.#offerModel.getOfferById(offerIds);
+      this.#renderPoint(point, this.offers, this.destinations);
     }
 
     render(this.#pointContainerView, siteMainElement);
@@ -148,6 +168,10 @@ export class BoardPresenter {
     this.#renderBoard();
   };
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#renderContainer, RenderPosition.AFTERBEGIN);
+  }
+
   renderNoPointsList() {
     this.noPointList = new EmptyListView();
     render(this.noPointList, this.#renderContainer);
@@ -168,6 +192,7 @@ export class BoardPresenter {
     if(this.noFuturePointList){
       remove(this.noFuturePointList);
     }
+    remove(remove(this.#loadingComponent));
   }
 
   handleModeChange = () => {

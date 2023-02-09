@@ -7,17 +7,17 @@ const Method = {
   DELETE: 'DELETE',
 };
 
-export default class PointsApiService extends ApiService {
-  get points() {
-    return this._load({url: 'points'})
+export default class DestinationsApiService extends ApiService {
+  get destinations() {
+    return this._load({url: 'destinations'})
       .then(ApiService.parseResponse);
   }
 
-  async updatePoint(point) {
+  async updateDestination(destination) {
     const response = await this._load({
-      url: `points/${point.id}`,
+      url: `destinations/${destination.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this.#adaptToServer(point)),
+      body: JSON.stringify(this.#adaptToServer(destination)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -26,11 +26,11 @@ export default class PointsApiService extends ApiService {
     return parsedResponse;
   }
 
-  async addPoint(point) {
+  async addDestination(destination) {
     const response = await this._load({
-      url: 'points',
+      url: 'destinations',
       method: Method.POST,
-      body: JSON.stringify(this.#adaptToServer(point)),
+      body: JSON.stringify(this.#adaptToServer(destination)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -39,18 +39,18 @@ export default class PointsApiService extends ApiService {
     return parsedResponse;
   }
 
-  async deletePoint(point) {
+  async deleteDestination(destination) {
     const response = await this._load({
-      url: `points/${point.id}`,
+      url: `destinations/${destination.id}`,
       method: Method.DELETE,
     });
 
     return response;
   }
 
-  #adaptToServer(point) {
-    const adaptedPoint = {...point,
-      'due_date': point.dueDate instanceof Date ? point.dueDate.toISOString() : null,
+  #adaptToServer(destination) {
+    const adaptedDestination = {...destination,
+      'due_date': destination.dueDate instanceof Date ? destination.dueDate.toISOString() : null,
       //'date_to': point.dueDate instanceof Date ? point.dueDate.toISOString() : null,
       //'is_favorite': point.isFavorite,
       //'repeating_days': point.repeating,
@@ -62,6 +62,6 @@ export default class PointsApiService extends ApiService {
     //delete adaptedPoint.isFavorite;
     //delete adaptedPoint.repeating;
 
-    return adaptedPoint;
+    return adaptedDestination;
   }
 }

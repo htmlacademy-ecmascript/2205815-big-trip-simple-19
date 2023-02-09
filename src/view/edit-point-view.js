@@ -125,7 +125,7 @@ function createEventEditFormTemplate(point) {
       </button>
     </header>
     ${createOfferContainerTemplate(offerByType, selectedOffers)}
-    ${createDestinationContainerTemplate(destinationDate)}
+    ${destinationDate.name === '' ? '' : createDestinationContainerTemplate(destinationDate)}
     </form>`;
 }
 
