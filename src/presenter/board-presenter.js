@@ -31,7 +31,7 @@ export class BoardPresenter {
     this.filterModel = filterModel;
     this.#pointModel.addObserver(this.handleModelEvent);
     this.filterModel.addObserver(this.handleModelEvent);
-/*
+    /*
     this.newPointPresenter = new NewPointPresenter({
       taskListContainer: this.newPointPresenter.element,
       onDataChange: this.handleViewAction,
