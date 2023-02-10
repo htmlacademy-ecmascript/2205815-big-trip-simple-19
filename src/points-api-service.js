@@ -50,7 +50,7 @@ export default class PointsApiService extends ApiService {
 
   #adaptToServer(point) {
     const adaptedPoint = {...point,
-      'due_date': point.dueDate instanceof Date ? point.dueDate.toISOString() : null,
+      //'due_date': point.dueDate instanceof Date ? point.dueDate.toISOString() : null,
       //'date_to': point.dueDate instanceof Date ? point.dueDate.toISOString() : null,
       //'is_favorite': point.isFavorite,
       //'repeating_days': point.repeating,

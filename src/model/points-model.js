@@ -89,7 +89,7 @@ export class PointModel extends Observable {
 
   adaptToClient(point) {
     const adaptedPoint = {...point,
-      dueDate: point['due_date'] !== null ? new Date(point['due_date']) : point['due_date'], // На клиенте дата хранится как экземпляр Date
+      //dueDate: point['due_date'] !== null ? new Date(point['due_date']) : point['due_date'], // На клиенте дата хранится как экземпляр Date
       //isArchive: point['is_archived'],
       //isFavorite: point['is_favorite'],
       //repeating: point['repeating_days'],
