@@ -40,12 +40,14 @@ function handleNewPointButtonClick() {
   newPointButtonComponent.element.disabled = true;
 }
 
-render(newPointButtonComponent, siteHeaderElement);
 
 console.log(offerModel.init());
 filterPresenter.init();
 boardPresenter.init();
-pointModel.init();
+pointModel.init()
+  .finally(() => {
+    render(newPointButtonComponent, siteHeaderElement);
+  });
 offerModel.init();
 destinationModel.init();
 

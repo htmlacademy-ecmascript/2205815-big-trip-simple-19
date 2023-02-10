@@ -52,7 +52,8 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.pointEditFormComponent, prevPointEditFormComponent);
+      replace(this.pointComponent, prevPointEditFormComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -70,6 +71,41 @@ export default class PointPresenter {
 
       this.replaceFormToPoint();
     }
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.pointEditFormComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.pointEditFormComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.pointEditFormComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.pointEditFormComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.pointEditFormComponent.shake(resetFormState);
   }
 
   replaceCardToForm() {
@@ -108,7 +144,6 @@ export default class PointPresenter {
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
       update,);
-    this.replaceFormToPoint();
   };
 
   handleDeleteClick = (point) => {

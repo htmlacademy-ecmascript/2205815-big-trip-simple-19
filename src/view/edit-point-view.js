@@ -70,7 +70,7 @@ function createEventEditFormTemplate(point) {
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers: selectedOffers, destination} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
-
+console.log(point);
   const offerByType = POINT_OFFERS.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
   const destinationDate = POINT_DESTINATION.find((dest) => dest.id === destination);
 
