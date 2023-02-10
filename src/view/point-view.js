@@ -10,12 +10,16 @@ function getOfferTemplate(offers) {
 </li>`).join('');
 }
 
-function createPointTemplate(point) {
-  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, offers, destination} = point;
+function createPointTemplate(point, offers, destinations) {
+  //console.log(destinations);
+  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'HH:mm');
   const humanizeStartEventDate = humanizePointDueDate(dateFrom, 'MMM DD');
-  const destinationName = destination.name;
+  const offerByType = offers.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
+  const destinationDate = destinations.find((dest) => dest.id === destination) || [];
+  //console.log(destinationDate);
+
 
   return `
   <li class="trip-events__item">
@@ -24,7 +28,7 @@ function createPointTemplate(point) {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">${type} to ${destinationName}</h3>
+    <h3 class="event__title">${type} to ${destinationDate.name}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime=${dateFrom}>${humanizeDateFrom}</time>
@@ -37,7 +41,7 @@ function createPointTemplate(point) {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-    ${getOfferTemplate(offers)}
+    ${getOfferTemplate(offerByType)}
     </ul>
     <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
@@ -60,7 +64,7 @@ export default class PointView extends AbstractView {
     this.handleEditFormClick = onEditFormClick;
     this.offers = offers;
     this.destination = destination;
-    this.point = {...point, offers: this.offers, destination: this.destination};
+    this.point = {...point};
 
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
@@ -69,7 +73,7 @@ export default class PointView extends AbstractView {
   }
 
   get template() {
-    return createPointTemplate(this.point);
+    return createPointTemplate(this.point, this.offers, this.destination );
   }
 
   editFormClickHandler = () => {

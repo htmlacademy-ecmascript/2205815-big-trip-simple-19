@@ -7,8 +7,6 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-const destinationType = POINT_DESTINATION.map((destination) => destination.name);
-
 
 function createDestinationTypeTemplate(destinationList) {
   return destinationList.map((element) => `<option value=${element}></option>
@@ -49,6 +47,7 @@ const createTypeEventTemplate = (offersType) =>
       </div>`).join('');
 
 const createDestinationTemplate = (destination) => {
+  //console.log(destination)
   const {description: descriptionPoint, pictures:[{src, description: descriptionPhoto}]} = destination;
 
   return `<p class="event__destination-description">${descriptionPoint}</p>
@@ -66,14 +65,15 @@ const createDestinationContainerTemplate = (destinations) =>
                   ${createDestinationTemplate(destinations)}
                 </section>`;
 
-function createEventEditFormTemplate(point) {
+function createEventEditFormTemplate(point, allOffers, allDestination) {
+  console.log(allDestination.length === 0);
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers: selectedOffers, destination} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
-console.log(point);
-  const offerByType = POINT_OFFERS.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
-  const destinationDate = POINT_DESTINATION.find((dest) => dest.id === destination);
-
+  const offerByType = allOffers.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
+  const destinationDate = allDestination.find((dest) => dest.id === destination) || [];
+  const destinationType = allDestination.map((dest) => dest.name);
+  //console.log(point);
   return `
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -125,7 +125,7 @@ console.log(point);
       </button>
     </header>
     ${createOfferContainerTemplate(offerByType, selectedOffers)}
-    ${destinationDate.name === '' ? '' : createDestinationContainerTemplate(destinationDate)}
+    ${createDestinationContainerTemplate(destinationDate)}
     </form>`;
 }
 
@@ -135,9 +135,11 @@ export default class EditPointView extends AbstractStatefulView {
   onSubmitForm = null;
 
 
-  constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick}) {
+  constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick, offers, destination}) {
     super();
     this.point = point;
+    this.allOffers = offers;
+    this.allDestination = destination;
     this._setState(EditPointView.parsePointToState(point));
     this.handleCloseBtnClick = onCloseBtnClick;
     this._restoreHandlers();
@@ -269,7 +271,7 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEventEditFormTemplate(this._state);
+    return createEventEditFormTemplate(this._state, this.allOffers, this.allDestination);
   }
 
   reset(point) {
@@ -302,7 +304,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   changeDestinationHandlers(evt) {
     evt.preventDefault();
-    const newDestination = POINT_DESTINATION.find((destination) => destination.name === evt.target.value);
+    const newDestination = this.allDestination.find((destination) => destination.name === evt.target.value);
     this.updateElement({
       destination: newDestination.id,
       offers: []

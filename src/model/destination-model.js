@@ -7,7 +7,7 @@ export class DestinationModel extends Observable {
   destinationsApiService = null;
 
   constructor({destinationsApiService}) {
-    super()
+    super();
     this.destinationsApiService = destinationsApiService;
   }
 
@@ -27,7 +27,7 @@ export class DestinationModel extends Observable {
 
   adaptToClient(destination) {
     const adaptedDestination = {...destination,
-      dueDate: destination['due_date'] !== null ? new Date(destination['due_date']) : destination['due_date'], // На клиенте дата хранится как экземпляр Date
+      //dueDate: destination['due_date'] !== null ? new Date(destination['due_date']) : destination['due_date'], // На клиенте дата хранится как экземпляр Date
       //isArchive: point['is_archived'],
       //isFavorite: point['is_favorite'],
       //repeating: point['repeating_days'],

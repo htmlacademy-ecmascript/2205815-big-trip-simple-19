@@ -26,7 +26,7 @@ export class OfferModel extends Observable {
 
   adaptToClient(offer) {
     const adaptedOffer = {...offer,
-      dueDate: offer['due_date'] !== null ? new Date(offer['due_date']) : offer['due_date'], // На клиенте дата хранится как экземпляр Date
+      //dueDate: offer['due_date'] !== null ? new Date(offer['due_date']) : offer['due_date'], // На клиенте дата хранится как экземпляр Date
       //isArchive: point['is_archived'],
       //isFavorite: point['is_favorite'],
       //repeating: point['repeating_days'],

@@ -50,7 +50,7 @@ export default class OffersApiService extends ApiService {
 
   #adaptToServer(offer) {
     const adaptedOffer = {...offer,
-      'due_date': offer.dueDate instanceof Date ? offer.dueDate.toISOString() : null,
+      //'due_date': offer.dueDate instanceof Date ? offer.dueDate.toISOString() : null,
       //'date_to': point.dueDate instanceof Date ? point.dueDate.toISOString() : null,
       //'is_favorite': point.isFavorite,
       //'repeating_days': point.repeating,

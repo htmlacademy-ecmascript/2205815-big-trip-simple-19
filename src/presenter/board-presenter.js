@@ -43,12 +43,15 @@ export class BoardPresenter {
     this.filterModel = filterModel;
     this.#pointModel.addObserver(this.handleModelEvent);
     this.filterModel.addObserver(this.handleModelEvent);
+    this.#offerModel.addObserver(this.handleModelEvent);
+    this.destinationModel.addObserver(this.handleModelEvent);
 
     this.newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#pointContainerView.element,
       onDataChange: this.handleViewAction,
       onDestroy: onNewPointDestroy
     });
+
 
   }
 

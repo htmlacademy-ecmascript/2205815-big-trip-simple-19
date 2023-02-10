@@ -50,7 +50,7 @@ export default class DestinationsApiService extends ApiService {
 
   #adaptToServer(destination) {
     const adaptedDestination = {...destination,
-      'due_date': destination.dueDate instanceof Date ? destination.dueDate.toISOString() : null,
+      //'due_date': destination.dueDate instanceof Date ? destination.dueDate.toISOString() : null,
       //'date_to': point.dueDate instanceof Date ? point.dueDate.toISOString() : null,
       //'is_favorite': point.isFavorite,
       //'repeating_days': point.repeating,

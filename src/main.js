@@ -7,7 +7,7 @@ import FilterPresenter from './presenter/filter-presenter';
 import FilterModel from './model/filter-model';
 import NewPointButtonView from './view/new-point-button';
 import PointsApiService from './points-api-service.js';
-import OffersApiService from './destinations-api-service';
+import OffersApiService from './offers-api-service';
 import DestinationsApiService from './destinations-api-service';
 
 
@@ -41,7 +41,6 @@ function handleNewPointButtonClick() {
 }
 
 
-console.log(offerModel.init());
 filterPresenter.init();
 boardPresenter.init();
 pointModel.init()
