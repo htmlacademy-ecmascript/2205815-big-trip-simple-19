@@ -14,7 +14,7 @@ export class DestinationModel extends Observable {
   async init() {
     try {
       const destinations = await this.destinationsApiService.destinations;
-      this.#destinations = destinations.map(this.adaptToClient);
+      this.#destinations = destinations.map(this.#adaptToClient);
     } catch(err) {
       this.#destinations = [];
     }
@@ -25,43 +25,10 @@ export class DestinationModel extends Observable {
     return this.#destinations;
   }
 
-  adaptToClient(destination) {
+  #adaptToClient(destination) {
     const adaptedDestination = {...destination,
-      //dueDate: destination['due_date'] !== null ? new Date(destination['due_date']) : destination['due_date'], // На клиенте дата хранится как экземпляр Date
-      //isArchive: point['is_archived'],
-      //isFavorite: point['is_favorite'],
-      //repeating: point['repeating_days'],
     };
-
-    // Ненужные ключи мы удаляем
-    //delete adaptedTask['due_date'];
-    //delete adaptedTask['is_archived'];
-    //delete adaptedTask['is_favorite'];
-    //delete adaptedTask['repeating_days'];
 
     return adaptedDestination;
   }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-getDestinationById(id) {
-  return this.#destinations.find((element) => element.id === id);
-}
-*/

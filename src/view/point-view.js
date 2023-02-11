@@ -19,8 +19,7 @@ function getOfferTemplate(offers, selectedOffers) {
 }
 
 function createPointTemplate(point, allOffers, destinations) {
-  //console.log(destinations);
-  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers: selectedOffers} = point;
+  const {type, basePrice, dateFrom, dateTo, destination, offers: selectedOffers} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'HH:mm');
   const humanizeStartEventDate = humanizePointDueDate(dateFrom, 'MMM DD');

@@ -89,17 +89,15 @@ export class PointModel extends Observable {
 
   adaptToClient(point) {
     const adaptedPoint = {...point,
-      //dueDate: point['due_date'] !== null ? new Date(point['due_date']) : point['due_date'], // На клиенте дата хранится как экземпляр Date
-      //isArchive: point['is_archived'],
-      //isFavorite: point['is_favorite'],
-      //repeating: point['repeating_days'],
+      dateFrom: point['date_from'],
+      dateTo: point['date_to'],
+      basePrice: point['base_price']
     };
 
-    // Ненужные ключи мы удаляем
-    //delete adaptedTask['due_date'];
-    //delete adaptedTask['is_archived'];
-    //delete adaptedTask['is_favorite'];
-    //delete adaptedTask['repeating_days'];
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint['base_price'];
+
 
     return adaptedPoint;
   }

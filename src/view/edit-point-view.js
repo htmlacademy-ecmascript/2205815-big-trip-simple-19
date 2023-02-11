@@ -1,7 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {humanizePointDueDate} from '../utils';
-import {POINT_OFFERS} from '../mock/mock-offer';
-import {POINT_DESTINATION} from '../mock/mock-destination';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
@@ -65,7 +63,7 @@ const createDestinationContainerTemplate = (destinations) =>
                 </section>`;
 
 function createEventEditFormTemplate(point, allOffers, allDestination) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers: selectedOffers, destination, isDeleting, isSaving} = point;
+  const {basePrice, dateFrom, dateTo, type, offers: selectedOffers, destination, isDeleting, isSaving} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
   const offerByType = allOffers.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
@@ -122,7 +120,7 @@ function createEventEditFormTemplate(point, allOffers, allDestination) {
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
-    ${createOfferContainerTemplate(offerByType, selectedOffers)}
+    ${selectedOffers.length ? createOfferContainerTemplate(offerByType, selectedOffers) : ''}
     ${createDestinationContainerTemplate(destinationDate)}
     </form>`;
 }
@@ -147,14 +145,14 @@ export default class EditPointView extends AbstractStatefulView {
 
   startDateChangeHandler = ([userDate]) => {
     this.updateElement({
-      date_from: userDate,
-      date_to: userDate
+      dateFrom: userDate,
+      dateTo: userDate
     });
   };
 
   endDateChangeHandler = ([userDate]) => {
     this.updateElement({
-      date_to: userDate,
+      dateTo: userDate,
     });
   };
 
@@ -215,7 +213,7 @@ export default class EditPointView extends AbstractStatefulView {
       this.onDeleteClickHandler();
     });
 
-    this.element.querySelector('.event__section--offers').addEventListener('click', (evt) => {
+    this.element.querySelector('.event__section--offers')?.addEventListener('click', (evt) => {
       this.onOfferClickHandler(evt);
     });
 
@@ -237,20 +235,20 @@ export default class EditPointView extends AbstractStatefulView {
 
   onChangeDateToHandler(evt) {
     this.updateElement({
-      date_to: evt.target.value
+      dateTo: evt.target.value
     });
   }
 
   onChangeDateFromHandler(evt) {
     this.updateElement({
-      date_from: evt.target.value
+      dateFrom: evt.target.value
     });
   }
 
   onChangePriceHandler(evt) {
     evt.preventDefault();
     this.updateElement({
-      base_price: evt.target.value
+      basePrice: evt.target.value
     });
   }
 

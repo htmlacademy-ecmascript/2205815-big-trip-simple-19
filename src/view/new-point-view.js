@@ -25,6 +25,7 @@ const newDestination = {
     description: ''
   }
 };
+
 const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const destinationType = POINT_DESTINATION.map((destination) => destination.name);
 
@@ -84,7 +85,7 @@ function createNewFormFormTemplate(point) {
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
   const offerByType = POINT_OFFERS.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
-  const destinationDate = POINT_DESTINATION.find((dest) => dest.id === destination) || newDestination;
+  const destinationDate = POINT_DESTINATION.find((dest) => dest.id === destination) || [];
 
 
   return `
@@ -136,7 +137,7 @@ function createNewFormFormTemplate(point) {
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
-    ${createOfferContainerTemplate(offerByType, selectedOffers)}
+    ${selectedOffers.length ? createOfferContainerTemplate(offerByType, selectedOffers) : ''}
     ${destinationDate.name === '' ? '' : createDestinationContainerTemplate(destinationDate)}
     </form>`;
 }
@@ -147,13 +148,17 @@ export default class NewPointView extends AbstractStatefulView {
   handleDeleteClick = null;
 
 
-  constructor({onFormSubmit, onDeleteClick, desinations}) {
+  constructor({onFormSubmit, onDeleteClick, offers, desinations}) {
     super();
     this.point = newFormPoint;
     this._setState(NewPointView.parsePointToState(this.point));
     this._restoreHandlers();
     this.handleFormSubmit = onFormSubmit;
     this.handleDeleteClick = onDeleteClick;
+    this.offers = offers;
+    this.desinations = desinations;
+    console.log(this.offers, this.desinations);
+
   }
 
   startDateChangeHandler = ([userDate]) => {

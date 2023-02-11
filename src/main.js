@@ -14,15 +14,16 @@ import DestinationsApiService from './destinations-api-service';
 const AUTHORIZATION = 'Basic hS2sfS44wcl152f5';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple/';
 
-const siteHeaderElement = document.querySelector('.trip-controls__filters');
-const siteMainElement = document.querySelector('.trip-events');
+const siteFilterElement = document.querySelector('.trip-controls__filters');
+const siteEventsElement = document.querySelector('.trip-events');
+const siteMainElement = document.querySelector('.trip-main');
 const pointModel = new PointModel({pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)});
 const destinationModel = new DestinationModel({destinationsApiService: new DestinationsApiService(END_POINT, AUTHORIZATION)});
 const offerModel = new OfferModel({offersApiService: new OffersApiService(END_POINT, AUTHORIZATION)});
 const filterModel = new FilterModel();
-const boardPresenter = new BoardPresenter({renderContainer: siteMainElement, pointModel, offerModel, destinationModel, filterModel, onNewPointDestroy: handleNewPointFormClose});
+const boardPresenter = new BoardPresenter({renderContainer: siteEventsElement, pointModel, offerModel, destinationModel, filterModel, onNewPointDestroy: handleNewPointFormClose});
 const filterPresenter = new FilterPresenter({
-  filterContainer: siteHeaderElement,
+  filterContainer: siteFilterElement,
   filterModel,
   pointModel
 });
@@ -47,5 +48,5 @@ boardPresenter.init();
 Promise.all([offerModel.init(), destinationModel.init()])
   .then(() => pointModel.init())
   .finally(() => {
-    render(newPointButtonComponent, siteHeaderElement);
+    render(newPointButtonComponent, siteMainElement);
   });

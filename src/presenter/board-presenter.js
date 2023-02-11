@@ -10,7 +10,7 @@ import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 
-const siteMainElement = document.querySelector('.trip-events');
+const siteEventElement = document.querySelector('.trip-events');
 const TimeLimit = {
   LOWER_LIMIT: 350,
   UPPER_LIMIT: 1000,
@@ -50,13 +50,15 @@ export class BoardPresenter {
     this.newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#pointContainerView.element,
       onDataChange: this.handleViewAction,
-      onDestroy: onNewPointDestroy
+      onDestroy: onNewPointDestroy,
+      offers: this.#offerModel,
+      destinations: this.destinationModel
     });
-
 
   }
 
   createPoint() {
+    //console.log(this.newPointPresenter);
     this.currentSortType = SortType.DEFAULT;
     this.filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
     this.newPointPresenter.init();
@@ -80,21 +82,21 @@ export class BoardPresenter {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         try {
-          await this.pointModel.updatePoint(updateType, update);
+          await this.#pointModel.updatePoint(updateType, update);
         } catch(err) {
           this.pointPresenter.get(update.id).setAborting();
         }
         break;
       case UserAction.ADD_POINT:
         try {
-          await this.pointModel.addPoint(updateType, update);
+          await this.#pointModel.addPoint(updateType, update);
         } catch(err) {
           this.newPointPresenter.setAborting();
         }
         break;
       case UserAction.DELETE_POINT:
         try {
-          await this.pointModel.deletePoint(updateType, update);
+          await this.#pointModel.deletePoint(updateType, update);
         } catch(err) {
           this.pointPresenter.get(update.id).setAborting();
         }
@@ -134,16 +136,17 @@ export class BoardPresenter {
   }
 
   #renderBoard() {
-
     if (this.#isLoading) {
       this.#renderLoading();
       return;
     }
-
+    //console.log(this.newPointPresenter);
     this.points = this.getPoint();
-
     this.destinations = this.destinationModel.destinations;
     this.offers = this.#offerModel.offers;
+    this.newPointPresenter.offers = this.offers;
+    this.newPointPresenter.destinations = this.destinations;
+    //console.log(this.newPointPresenter);
     if (this.points.length === 0 && this.filterType === 'future') {
       this.renderNoFuturePointsList();
       return;
@@ -162,7 +165,7 @@ export class BoardPresenter {
       this.renderSortView();
     }
 
-    render(this.#pointContainerView, siteMainElement);
+    render(this.#pointContainerView, siteEventElement);
   }
 
 
@@ -184,7 +187,7 @@ export class BoardPresenter {
       clickSortByDateHandler: this.sortByDateHandler
     });
 
-    render(this.#sortView, siteMainElement);
+    render(this.#sortView, siteEventElement);
   }
 
   sortByPriceHandler = () => {
