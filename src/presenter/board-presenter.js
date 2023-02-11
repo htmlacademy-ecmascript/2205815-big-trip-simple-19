@@ -24,6 +24,7 @@ export class BoardPresenter {
   #pointContainerView = new PointContainerView();
   #loadingComponent = new LoadingView();
   noPointList = null;
+  #sortView = null;
   currentSortType = SortType.DATE;
   filterType = FilterType.ALL;
   #isLoading = true;
@@ -78,15 +79,14 @@ export class BoardPresenter {
 
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.pointPresenter.get(update.id).setSaving();
         try {
           await this.pointModel.updatePoint(updateType, update);
         } catch(err) {
+          console.log(err);
           this.pointPresenter.get(update.id).setAborting();
         }
         break;
       case UserAction.ADD_POINT:
-        this.newPointPresenter.setSaving();
         try {
           await this.pointModel.addPoint(updateType, update);
         } catch(err) {
@@ -94,7 +94,6 @@ export class BoardPresenter {
         }
         break;
       case UserAction.DELETE_POINT:
-        this.pointPresenter.get(update.id).setDeleting();
         try {
           await this.pointModel.deletePoint(updateType, update);
         } catch(err) {
@@ -120,6 +119,9 @@ export class BoardPresenter {
         this.#renderBoard();
         break;
       case UpdateType.INIT:
+        if ( data !== 'POINTS') {
+          break;
+        }
         this.#isLoading = false;
         remove(this.#loadingComponent);
         this.#renderBoard();
@@ -129,7 +131,6 @@ export class BoardPresenter {
 
 
   init() {
-    this.renderSortView();
     this.#renderBoard();
   }
 
@@ -155,10 +156,11 @@ export class BoardPresenter {
     }
 
     for (const point of this.points) {
-      //const offerIds = point.offers;
-      //const destination = this.#destinationModel.getDestinationById(point.destination);
-      //const offers = this.#offerModel.getOfferById(offerIds);
       this.#renderPoint(point, this.offers, this.destinations);
+    }
+
+    if (!this.#sortView) {
+      this.renderSortView();
     }
 
     render(this.#pointContainerView, siteMainElement);
@@ -169,19 +171,21 @@ export class BoardPresenter {
     const pointPresenter = new PointPresenter({
       renderContainer: this.#pointContainerView.element,
       onModeChange: this.handleModeChange,
-      onDataChange: this.handleViewAction
+      onDataChange: this.handleViewAction,
+      offers: this.offers,
+      destination: this.destinations
     });
     pointPresenter.init(point, offers, destination);
     this.pointPresenter.set(point.id, pointPresenter);
   }
 
   renderSortView() {
-    const sortView = new SortView({
+    this.#sortView = new SortView({
       clickSortByPriceHandler: this.sortByPriceHandler,
       clickSortByDateHandler: this.sortByDateHandler
     });
 
-    render(sortView, siteMainElement);
+    render(this.#sortView, siteMainElement);
   }
 
   sortByPriceHandler = () => {
@@ -220,7 +224,9 @@ export class BoardPresenter {
     if(this.noFuturePointList){
       remove(this.noFuturePointList);
     }
-    remove(remove(this.#loadingComponent));
+    if (this.#loadingComponent) {
+      remove(this.#loadingComponent);
+    }
   }
 
   handleModeChange = () => {

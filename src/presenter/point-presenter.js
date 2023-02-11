@@ -17,16 +17,17 @@ export default class PointPresenter {
   point = null;
   #mode = Mode.DEFAULT;
 
-  constructor({renderContainer, onModeChange, onDataChange}) {
+  constructor({renderContainer, onModeChange, onDataChange, offers, destination}) {
     this.#renderContainer = renderContainer;
     this.handleModeChange = onModeChange;
     this.handleDataChange = onDataChange;
-  }
-
-  init(point, offers, destination) {
-    this.point = point;
     this.offers = offers;
     this.destination = destination;
+  }
+
+  init(point) {
+    this.point = point;
+
 
     const prevPointComponent = this.pointComponent;
     const prevPointEditFormComponent = this.pointEditFormComponent;
@@ -73,23 +74,6 @@ export default class PointPresenter {
     }
   }
 
-  setSaving() {
-    if (this.#mode === Mode.EDITING) {
-      this.pointEditFormComponent.updateElement({
-        isDisabled: true,
-        isSaving: true,
-      });
-    }
-  }
-
-  setDeleting() {
-    if (this.#mode === Mode.EDITING) {
-      this.pointEditFormComponent.updateElement({
-        isDisabled: true,
-        isDeleting: true,
-      });
-    }
-  }
 
   setAborting() {
     if (this.#mode === Mode.DEFAULT) {
@@ -142,7 +126,7 @@ export default class PointPresenter {
   handleFormSubmit = (update) => {
     this.handleDataChange (
       UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       update,);
   };
 

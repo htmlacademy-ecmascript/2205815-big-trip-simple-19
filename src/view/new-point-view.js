@@ -81,7 +81,6 @@ const createDestinationContainerTemplate = (destinations) =>
 
 function createNewFormFormTemplate(point) {
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers: selectedOffers, destination} = point;
-  console.log(selectedOffers);
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
   const offerByType = POINT_OFFERS.find((pointOffer) => pointOffer.type === point.type)?.offers || [];

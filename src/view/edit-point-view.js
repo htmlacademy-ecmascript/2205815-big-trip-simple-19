@@ -47,7 +47,6 @@ const createTypeEventTemplate = (offersType) =>
       </div>`).join('');
 
 const createDestinationTemplate = (destination) => {
-  //console.log(destination)
   const {description: descriptionPoint, pictures:[{src, description: descriptionPhoto}]} = destination;
 
   return `<p class="event__destination-description">${descriptionPoint}</p>
@@ -66,14 +65,13 @@ const createDestinationContainerTemplate = (destinations) =>
                 </section>`;
 
 function createEventEditFormTemplate(point, allOffers, allDestination) {
-  console.log(allDestination.length === 0);
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers: selectedOffers, destination} = point;
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, offers: selectedOffers, destination, isDeleting, isSaving} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
   const offerByType = allOffers.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
   const destinationDate = allDestination.find((dest) => dest.id === destination) || [];
   const destinationType = allDestination.map((dest) => dest.name);
-  //console.log(point);
+
   return `
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -118,8 +116,8 @@ function createEventEditFormTemplate(point, allOffers, allDestination) {
         <input class="event__input  event__input--price" id="event-price-1" type="number"  name="event-price" value="${basePrice}" required>
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
+      <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
+      <button class="event__reset-btn" type="reset">${isDeleting ? 'Deleting...' : 'Delete'}</button>
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>
@@ -281,10 +279,16 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   onSubmitHandler = () => {
-    this.onSubmitForm(EditPointView.parseStateToPoint({...this._state}));
+    this.updateElement({
+      isSaving: true
+    });
+    this.onSubmitForm(EditPointView.parseStateToPoint(this._state));
   };
 
   onDeleteClickHandler = () => {
+    this.updateElement({
+      isDeleting: true
+    });
     this.handleDeleteClick(EditPointView.parseStateToPoint(this._state));
   };
 
@@ -313,11 +317,18 @@ export default class EditPointView extends AbstractStatefulView {
 
 
   static parsePointToState(point) {
-    return {...point};
+    return {...point,
+      isDeleting: false,
+      isSaving: false,
+      isDisabled: false
+    };
   }
 
 
   static parseStateToPoint(state) {
+    delete state.isDeleting;
+    delete state.isSaving;
+    delete state.isDisabled;
     return {...state};
 
   }

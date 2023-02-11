@@ -43,10 +43,9 @@ function handleNewPointButtonClick() {
 
 filterPresenter.init();
 boardPresenter.init();
-pointModel.init()
+
+Promise.all([offerModel.init(), destinationModel.init()])
+  .then(() => pointModel.init())
   .finally(() => {
     render(newPointButtonComponent, siteHeaderElement);
   });
-offerModel.init();
-destinationModel.init();
-
