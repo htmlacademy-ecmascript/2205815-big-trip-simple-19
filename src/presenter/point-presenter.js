@@ -23,10 +23,12 @@ export default class PointPresenter {
     this.handleDataChange = onDataChange;
     this.offers = offers;
     this.destination = destination;
+    //console.log(this.offers);
   }
 
   init(point) {
     this.point = point;
+    //console.log(this.point);
 
 
     const prevPointComponent = this.pointComponent;

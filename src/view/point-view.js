@@ -2,24 +2,30 @@ import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDueDate} from '../utils.js';
 
 
-function getOfferTemplate(offers) {
-  return offers.map(({title, price}) => `<li class="event__offer">
+function getOfferTemplate(offers, selectedOffers) {
+  const isSelected = (selectOffers, id) => {
+    for(const selectedOfferId of selectOffers) {
+      if (selectedOfferId === id) {
+        return true;
+      }
+    }
+  };
+
+  return offers.map(({title, price, id}) => isSelected(selectedOffers, id) ? `<li class="event__offer">
 <span class="event__offer-title">${title}</span>
 &plus;&euro;&nbsp;
 <span class="event__offer-price">${price}</span>
-</li>`).join('');
+</li>` : '').join('');
 }
 
-function createPointTemplate(point, offers, destinations) {
+function createPointTemplate(point, allOffers, destinations) {
   //console.log(destinations);
-  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination} = point;
+  const {type, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers: selectedOffers} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'HH:mm');
   const humanizeStartEventDate = humanizePointDueDate(dateFrom, 'MMM DD');
-  const offerByType = offers.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
+  const offerByType = allOffers.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
   const destinationDate = destinations.find((dest) => dest.id === destination) || [];
-  //console.log(destinationDate);
-
 
   return `
   <li class="trip-events__item">
@@ -41,7 +47,7 @@ function createPointTemplate(point, offers, destinations) {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-    ${getOfferTemplate(offerByType)}
+    ${getOfferTemplate(offerByType, selectedOffers)}
     </ul>
     <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>

@@ -82,7 +82,6 @@ export class BoardPresenter {
         try {
           await this.pointModel.updatePoint(updateType, update);
         } catch(err) {
-          console.log(err);
           this.pointPresenter.get(update.id).setAborting();
         }
         break;

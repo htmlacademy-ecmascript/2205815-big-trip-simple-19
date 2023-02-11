@@ -9,10 +9,13 @@ export default class NewPointPresenter {
 
   #newPointComponent = null;
 
-  constructor({pointListContainer, onDataChange, onDestroy}) {
+  constructor({pointListContainer, onDataChange, onDestroy, offers,  destinations}) {
     this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
+    this.destinations = destinations;
+    this.offers = offers;
+
   }
 
   init() {

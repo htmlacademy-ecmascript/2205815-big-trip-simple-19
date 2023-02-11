@@ -147,7 +147,7 @@ export default class NewPointView extends AbstractStatefulView {
   handleDeleteClick = null;
 
 
-  constructor({onFormSubmit, onDeleteClick}) {
+  constructor({onFormSubmit, onDeleteClick, desinations}) {
     super();
     this.point = newFormPoint;
     this._setState(NewPointView.parsePointToState(this.point));
