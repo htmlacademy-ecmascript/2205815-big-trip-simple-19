@@ -1,4 +1,4 @@
-import ApiService from './framework/api-service.js';
+import ApiService from '../framework/api-service.js';
 
 const Method = {
   GET: 'GET',
@@ -50,18 +50,7 @@ export default class DestinationsApiService extends ApiService {
 
   #adaptToServer(destination) {
     const adaptedDestination = {...destination,
-      //'due_date': destination.dueDate instanceof Date ? destination.dueDate.toISOString() : null,
-      //'date_to': point.dueDate instanceof Date ? point.dueDate.toISOString() : null,
-      //'is_favorite': point.isFavorite,
-      //'repeating_days': point.repeating,
     };
-
-    // Ненужные ключи мы удаляем
-    //delete adaptedPoint.dueDate;
-    //delete adaptedPoint.isArchive;
-    //delete adaptedPoint.isFavorite;
-    //delete adaptedPoint.repeating;
-
     return adaptedDestination;
   }
 }

@@ -6,12 +6,12 @@ import {OfferModel} from './model/offer-model';
 import FilterPresenter from './presenter/filter-presenter';
 import FilterModel from './model/filter-model';
 import NewPointButtonView from './view/new-point-button';
-import PointsApiService from './points-api-service.js';
-import OffersApiService from './offers-api-service';
-import DestinationsApiService from './destinations-api-service';
+import PointsApiService from './API/points-api-service.js';
+import OffersApiService from './API/offers-api-service.js';
+import DestinationsApiService from './API/destinations-api-service.js';
 
 
-const AUTHORIZATION = 'Basic hS2sfS44wcl152f5';
+const AUTHORIZATION = 'Basic hS2sfS44wcl152f7';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple/';
 
 const siteFilterElement = document.querySelector('.trip-controls__filters');

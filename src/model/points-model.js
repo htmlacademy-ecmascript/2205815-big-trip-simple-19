@@ -25,6 +25,11 @@ export class PointModel extends Observable {
     return this.#points;
   }
 
+  getPointByPrice() {
+    const basePrice = 'base_price';
+    this.#points.sort((a, b) => a[basePrice] < b[basePrice] ? 1 : -1);
+    return this.#points;
+  }
 
   async updatePoint(updateType, update) {
 

@@ -31,6 +31,7 @@ const today = new Date();
 export const filter = {
   [FilterType.ALL]: (points) => points.filter((point) => point),
   [FilterType.EVERYTHING]: (points) => points.filter((point) => point),
-  [FilterType.FUTURE]: (points) => points.filter((point) => new Date(point.date_to) > today)
+  [FilterType.FUTURE]: (points) => points.filter((point) => new Date(point.dateTo) > today)
 };
 
+export const OFFERS_BY_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];

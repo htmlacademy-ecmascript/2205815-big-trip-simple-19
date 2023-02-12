@@ -161,20 +161,20 @@ export default class NewPointView extends AbstractStatefulView {
 
   }
 
-  startDateChangeHandler = ([userDate]) => {
+  #startDateChangeHandler = ([userDate]) => {
     this.updateElement({
-      date_from: userDate,
-      date_to: userDate
+      dateFrom: userDate,
+      dateTo: userDate
     });
   };
 
-  endDateChangeHandler = ([userDate]) => {
+  #endDateChangeHandler = ([userDate]) => {
     this.updateElement({
       date_to: userDate,
     });
   };
 
-  setStartDatepicker() {
+  #setStartDatepicker() {
     this.datepicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
@@ -186,7 +186,7 @@ export default class NewPointView extends AbstractStatefulView {
     );
   }
 
-  setEndDatepicker() {
+  #setEndDatepicker() {
     this.datepicker = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
@@ -199,7 +199,7 @@ export default class NewPointView extends AbstractStatefulView {
     );
   }
 
-  removeElement() {
+  #removeElement() {
     super.removeElement();
 
     if (this.datepicker) {
@@ -210,62 +210,62 @@ export default class NewPointView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event__type-group').addEventListener('change', (evt) => {
-      this.changeOffersTypeHandlers(evt);
+      this.#changeOffersTypeHandlers(evt);
     });
 
     this.element.querySelector('.event__input--destination').addEventListener('change', (evt) => {
-      this.changeDestinationHandlers(evt);
+      this.#changeDestinationHandlers(evt);
     });
 
     this.element.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      this.onSubmitHandler();
+      this.#onSubmitHandler();
     });
 
     this.element.querySelector('.event__reset-btn').addEventListener('click', (evt) => {
       evt.preventDefault();
-      this.onDeleteClickHandler();
+      this.#onDeleteClickHandler();
     });
 
     this.element.querySelector('.event__section--offers').addEventListener('click', (evt) => {
-      this.onOfferClickHandler(evt);
+      this.#onOfferClickHandler(evt);
     });
 
     this.element.querySelector('#event-price-1').addEventListener('change', (evt) => {
-      this.onChangePriceHandler(evt);
+      this.#onChangePriceHandler(evt);
     });
 
     this.element.querySelector('#event-start-time-1').addEventListener('change', (evt) => {
-      this.onChangeDateFromHandler(evt);
+      this.#onChangeDateFromHandler(evt);
     });
 
     this.element.querySelector('#event-end-time-1').addEventListener('change', (evt) => {
-      this.onChangeDateToHandler(evt);
+      this.#onChangeDateToHandler(evt);
     });
 
-    this.setStartDatepicker();
-    this.setEndDatepicker();
+    this.#setStartDatepicker();
+    this.#setEndDatepicker();
   }
 
-  onChangeDateToHandler(evt) {
+  #onChangeDateToHandler(evt) {
     this.updateElement({
       date_to: evt.target.value
     });
   }
 
-  onChangeDateFromHandler(evt) {
+  #onChangeDateFromHandler(evt) {
     this.updateElement({
       date_from: evt.target.value
     });
   }
 
-  onChangePriceHandler(evt) {
+  #onChangePriceHandler(evt) {
     this.updateElement({
       base_price: evt.target.value
     });
   }
 
-  onOfferClickHandler(evt) {
+  #onOfferClickHandler(evt) {
     const id = evt.target.id;
     const idNumber = Number(id);
     if(idNumber === 0) {
@@ -289,15 +289,15 @@ export default class NewPointView extends AbstractStatefulView {
     );
   }
 
-  onSubmitHandler = () => {
+  #onSubmitHandler = () => {
     this.handleFormSubmit(NewPointView.parseStateToPoint({...this._state}));
   };
 
-  onDeleteClickHandler = () => {
+  #onDeleteClickHandler = () => {
     this.handleDeleteClick(NewPointView.parseStateToPoint(this._state));
   };
 
-  changeOffersTypeHandlers(evt) {
+  #changeOffersTypeHandlers(evt) {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
@@ -306,7 +306,7 @@ export default class NewPointView extends AbstractStatefulView {
 
   }
 
-  changeDestinationHandlers(evt) {
+  #changeDestinationHandlers(evt) {
     evt.preventDefault();
     const newDestination = POINT_DESTINATION.find((destination) => destination.name === evt.target.value);
     this.updateElement({
