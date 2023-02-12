@@ -4,13 +4,13 @@ import SortView from '../view/sort-view';
 import PointPresenter from './point-presenter.js';
 import PointContainerView from '../view/point-container-view';
 import {SortType, UpdateType, UserAction, filter, FilterType} from '../const.js';
-import NoFuturePoint from '../view/no-future-point-view.js';
+import NoFuturePoint from '../view/no-future-point-list-view.js';
 import NewPointPresenter from './new-point-presenter.js';
 import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 
-const siteEventElement = document.querySelector('.trip-events');
+const siteMainElement = document.querySelector('.trip-events');
 const TimeLimit = {
   LOWER_LIMIT: 350,
   UPPER_LIMIT: 1000,
@@ -47,18 +47,18 @@ export class BoardPresenter {
     this.#offerModel.addObserver(this.handleModelEvent);
     this.destinationModel.addObserver(this.handleModelEvent);
 
+
     this.newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#pointContainerView.element,
       onDataChange: this.handleViewAction,
       onDestroy: onNewPointDestroy,
-      offers: this.#offerModel,
-      destinations: this.destinationModel
+      offers: this.#offerModel.offers,
+      destinations : this.destinationModel.destinations
     });
 
   }
 
   createPoint() {
-    //console.log(this.newPointPresenter);
     this.currentSortType = SortType.DEFAULT;
     this.filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
     this.newPointPresenter.init();
@@ -136,17 +136,15 @@ export class BoardPresenter {
   }
 
   #renderBoard() {
+
     if (this.#isLoading) {
       this.#renderLoading();
       return;
     }
-    //console.log(this.newPointPresenter);
+
     this.points = this.getPoint();
     this.destinations = this.destinationModel.destinations;
     this.offers = this.#offerModel.offers;
-    this.newPointPresenter.offers = this.offers;
-    this.newPointPresenter.destinations = this.destinations;
-    //console.log(this.newPointPresenter);
     if (this.points.length === 0 && this.filterType === 'future') {
       this.renderNoFuturePointsList();
       return;
@@ -165,7 +163,7 @@ export class BoardPresenter {
       this.renderSortView();
     }
 
-    render(this.#pointContainerView, siteEventElement);
+    render(this.#pointContainerView, siteMainElement);
   }
 
 
@@ -187,7 +185,7 @@ export class BoardPresenter {
       clickSortByDateHandler: this.sortByDateHandler
     });
 
-    render(this.#sortView, siteEventElement);
+    render(this.#sortView, siteMainElement);
   }
 
   sortByPriceHandler = () => {

@@ -15,6 +15,7 @@ export class PointModel extends Observable {
       const points = await this.pointsApiService.points;
       this.#points = points.map(this.adaptToClient);
     } catch(err) {
+
       this.#points = [];
     }
     this._notify(UpdateType.INIT, 'POINTS');
@@ -24,17 +25,6 @@ export class PointModel extends Observable {
     return this.#points;
   }
 
-  getPoint() {
-    const dateFrom = 'date_from';
-    this.#points.sort((a, b) => a[dateFrom] > b[dateFrom] ? 1 : -1);
-    return this.#points;
-  }
-
-  getPointByPrice() {
-    const basePrice = 'base_price';
-    this.#points.sort((a, b) => a[basePrice] < b[basePrice] ? 1 : -1);
-    return this.#points;
-  }
 
   async updatePoint(updateType, update) {
 

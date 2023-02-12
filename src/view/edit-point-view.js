@@ -31,11 +31,11 @@ function createOfferTemplate(offers, selectedOffers) {
 }
 
 export const createOfferContainerTemplate = (offers, selectedOffers) =>
-  `<section class="event__section  event__section--offers">
+  offers.length ? `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
           ${createOfferTemplate(offers, selectedOffers)}
-          </section>`;
+          </section>` : '';
 
 const createTypeEventTemplate = (offersType) =>
   offersType.map((element) =>
@@ -120,7 +120,7 @@ function createEventEditFormTemplate(point, allOffers, allDestination) {
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
-    ${selectedOffers.length ? createOfferContainerTemplate(offerByType, selectedOffers) : ''}
+    ${createOfferContainerTemplate(offerByType, selectedOffers)}
     ${createDestinationContainerTemplate(destinationDate)}
     </form>`;
 }

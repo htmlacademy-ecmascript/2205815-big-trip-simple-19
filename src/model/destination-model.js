@@ -23,6 +23,7 @@ export class DestinationModel extends Observable {
 
   get destinations() {
     return this.#destinations;
+
   }
 
   #adaptToClient(destination) {
