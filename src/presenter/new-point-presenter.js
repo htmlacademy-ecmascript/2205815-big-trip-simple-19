@@ -21,12 +21,11 @@ export default class NewPointPresenter {
     if (this.#newPointComponent !== null) {
       return;
     }
-
     this.#newPointComponent = new NewPointView({
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
       offers: this.offers,
-      destinations : this.destinations
+      destinations: this.destinations
     });
 
     render(this.#newPointComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
