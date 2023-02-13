@@ -289,12 +289,14 @@ export default class NewPointView extends AbstractStatefulView {
   }
 
   #changeDestinationHandlers(evt) {
-    evt.preventDefault();
-    const newDestination = this.destinations.find((destination) => destination.name === evt.target.value);
-    this.updateElement({
-      destination: newDestination.id,
-      offers: []
-    });
+    if (evt.target.value) {
+      evt.preventDefault();
+      const newDestination = this.destinations.find((destination) => destination.name === evt.target.value);
+      this.updateElement({
+        destination: newDestination.id,
+        offers: []
+      });
+    }
   }
 
 

@@ -6,9 +6,9 @@ import {OfferModel} from './model/offer-model';
 import FilterPresenter from './presenter/filter-presenter';
 import FilterModel from './model/filter-model';
 import NewPointButtonView from './view/new-point-button';
-import PointsApiService from './API/points-api-service.js';
-import OffersApiService from './API/offers-api-service.js';
-import DestinationsApiService from './API/destinations-api-service.js';
+import PointsApiService from './API.js/points-api-service.js';
+import OffersApiService from './API.js/offers-api-service.js';
+import DestinationsApiService from './API.js/destinations-api-service.js';
 
 
 const AUTHORIZATION = 'Basic hS2sfS44wcl1527707';

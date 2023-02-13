@@ -148,7 +148,7 @@ export default class EditPointView extends AbstractStatefulView {
     });
   };
 
-  #setStartDatepicker() {
+  setStartDatepicker() {
     this.#datepicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
@@ -160,7 +160,7 @@ export default class EditPointView extends AbstractStatefulView {
     );
   }
 
-  #setEndDatepicker() {
+  setEndDatepicker() {
     this.#datepicker = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
@@ -214,24 +214,24 @@ export default class EditPointView extends AbstractStatefulView {
     });
 
     this.element.querySelector('#event-start-time-1').addEventListener('change', (evt) => {
-      this.#onChangeDateFromHandler(evt);
+      this.onChangeDateFromHandler(evt);
     });
 
     this.element.querySelector('#event-end-time-1').addEventListener('change', (evt) => {
-      this.#onChangeDateToHandler(evt);
+      this.onChangeDateToHandler(evt);
     });
 
-    this.#setStartDatepicker();
-    this.#setEndDatepicker();
+    this.setStartDatepicker();
+    this.setEndDatepicker();
   }
 
-  #onChangeDateToHandler(evt) {
+  onChangeDateToHandler(evt) {
     this.updateElement({
       dateTo: evt.target.value
     });
   }
 
-  #onChangeDateFromHandler(evt) {
+  onChangeDateFromHandler(evt) {
     this.updateElement({
       dateFrom: evt.target.value
     });
@@ -297,12 +297,13 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   #changeDestinationHandlers(evt) {
-    evt.preventDefault();
-    const newDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
-    this.updateElement({
-      destination: newDestination.id,
-      offers: []
-    });
+    if (evt.target.value) {
+      const newDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
+      this.updateElement({
+        destination: newDestination.id,
+        offers: []
+      });
+    }
   }
 
 
