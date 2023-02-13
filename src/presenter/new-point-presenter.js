@@ -6,23 +6,25 @@ export default class NewPointPresenter {
   #pointListContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
-
   #newPointComponent = null;
 
-  constructor({taskListContainer, onDataChange, onDestroy}) {
-    this.#pointListContainer = taskListContainer;
+  constructor({pointListContainer, onDataChange, onDestroy, offers, destinations}) {
+    this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
+    this.destinations = destinations;
+    this.offers = offers;
   }
 
   init() {
     if (this.#newPointComponent !== null) {
       return;
     }
-
     this.#newPointComponent = new NewPointView({
       onFormSubmit: this.#handleFormSubmit,
-      onDeleteClick: this.#handleDeleteClick
+      onDeleteClick: this.#handleDeleteClick,
+      offers: this.offers,
+      destinations: this.destinations
     });
 
     render(this.#newPointComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
@@ -44,7 +46,7 @@ export default class NewPointPresenter {
   }
 
   setSaving() {
-    this.#newPointComponent.updateElement({
+    this.newPointComponent.updateElement({
       isDisabled: true,
       isSaving: true,
     });
@@ -52,21 +54,21 @@ export default class NewPointPresenter {
 
   setAborting() {
     const resetFormState = () => {
-      this.#newPointComponent.updateElement({
+      this.newPointComponent.updateElement({
         isDisabled: false,
         isSaving: false,
         isDeleting: false,
       });
     };
 
-    this.#newPointComponent.shake(resetFormState);
+    this.newPointComponent.shake(resetFormState);
   }
 
   #handleFormSubmit = (point) => {
     this.#handleDataChange(
-      UserAction.ADD_TASK,
+      UserAction.ADD_POINT,
       UpdateType.MINOR,
-      point,
+      point
     );
   };
 
