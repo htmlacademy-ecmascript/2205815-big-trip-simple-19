@@ -114,11 +114,11 @@ export class BoardPresenter {
         this.#pointPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        this.clearPointList();
+        this.#clearPointList();
         this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-        this.clearPointList();
+        this.#clearPointList();
         this.#renderBoard();
         break;
       case UpdateType.INIT:
@@ -183,21 +183,21 @@ export class BoardPresenter {
 
   #renderSortView() {
     this.#sortView = new SortView({
-      clickSortByPriceHandler: this.sortByPriceHandler,
-      clickSortByDateHandler: this.sortByDateHandler
+      clickSortByPriceHandler: this.#sortByPriceHandler,
+      clickSortByDateHandler: this.#sortByDateHandler
     });
 
     render(this.#sortView, siteEventElement);
   }
 
-  sortByPriceHandler = () => {
-    this.clearPointList();
+  #sortByPriceHandler = () => {
+    this.#clearPointList();
     this.#currentSortType = SortType.PRICE;
     this.#renderBoard();
   };
 
-  sortByDateHandler = () => {
-    this.clearPointList();
+  #sortByDateHandler = () => {
+    this.#clearPointList();
     this.#currentSortType = SortType.DATE;
     this.#renderBoard();
   };
@@ -216,7 +216,7 @@ export class BoardPresenter {
     render(this.#noFuturePointList, this.#renderContainer);
   }
 
-  clearPointList() {
+  #clearPointList() {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
     if(this.#noPointList){
