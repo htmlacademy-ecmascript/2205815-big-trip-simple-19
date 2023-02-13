@@ -17,7 +17,7 @@ export default class OffersApiService extends ApiService {
     const response = await this._load({
       url: `offers/${offer.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this.#adaptToServer(offer)),
+      body: JSON.stringify(offer),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -30,7 +30,7 @@ export default class OffersApiService extends ApiService {
     const response = await this._load({
       url: 'offers',
       method: Method.POST,
-      body: JSON.stringify(this.#adaptToServer(offer)),
+      body: JSON.stringify(offer),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -46,22 +46,5 @@ export default class OffersApiService extends ApiService {
     });
 
     return response;
-  }
-
-  #adaptToServer(offer) {
-    const adaptedOffer = {...offer,
-      //'due_date': offer.dueDate instanceof Date ? offer.dueDate.toISOString() : null,
-      //'date_to': point.dueDate instanceof Date ? point.dueDate.toISOString() : null,
-      //'is_favorite': point.isFavorite,
-      //'repeating_days': point.repeating,
-    };
-
-    // Ненужные ключи мы удаляем
-    //delete adaptedPoint.dueDate;
-    //delete adaptedPoint.isArchive;
-    //delete adaptedPoint.isFavorite;
-    //delete adaptedPoint.repeating;
-
-    return adaptedOffer;
   }
 }

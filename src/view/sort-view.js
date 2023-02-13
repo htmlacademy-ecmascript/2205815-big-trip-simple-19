@@ -41,10 +41,10 @@ export default class SortView extends AbstractView {
 
     this.element.addEventListener('click', (evt) => {
       if (evt.target.id === 'sort-day') {
-        this.getClickSortByDateHandler();
+        this.#getClickSortByDateHandler();
       }
       if (evt.target.id === 'sort-price') {
-        this.getClickSortByPriceHandler();
+        this.#getClickSortByPriceHandler();
       }
     });
 
@@ -54,11 +54,11 @@ export default class SortView extends AbstractView {
     return creatFilterTeamplate();
   }
 
-  getClickSortByPriceHandler() {
+  #getClickSortByPriceHandler() {
     this.clickSortByPriceHandler();
   }
 
-  getClickSortByDateHandler() {
+  #getClickSortByDateHandler() {
     this.clickSortByDateHandler();
   }
 }

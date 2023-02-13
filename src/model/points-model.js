@@ -3,16 +3,16 @@ import Observable from '../framework/observable.js';
 
 export class PointModel extends Observable {
   #points = [];
-  pointsApiService = null;
+  #pointsApiService = null;
 
   constructor({pointsApiService}) {
     super();
-    this.pointsApiService = pointsApiService;
+    this.#pointsApiService = pointsApiService;
   }
 
   async init() {
     try {
-      const points = await this.pointsApiService.points;
+      const points = await this.#pointsApiService.points;
       this.#points = points.map(this.adaptToClient);
     } catch(err) {
 
@@ -39,7 +39,7 @@ export class PointModel extends Observable {
     }
 
     try {
-      const response = await this.pointsApiService.updatePoint(update);
+      const response = await this.#pointsApiService.updatePoint(update);
       const updatedPoint = this.adaptToClient(response);
       this.#points = [
         ...this.#points.slice(0, index),
@@ -54,7 +54,7 @@ export class PointModel extends Observable {
 
   async addPoint(updateType, update) {
     try {
-      const response = await this.pointsApiService.addPoint(update);
+      const response = await this.#pointsApiService.addPoint(update);
       const newPoint = this.adaptToClient(response);
       this.#points = [newPoint, ...this.#points];
       this._notify(updateType, newPoint);
@@ -71,7 +71,7 @@ export class PointModel extends Observable {
     }
 
     try {
-      await this.pointsApiService.deletePoint(update);
+      await this.#pointsApiService.deletePoint(update);
       this.#points = [
         ...this.#points.slice(0, index),
         ...this.#points.slice(index + 1),
@@ -84,15 +84,14 @@ export class PointModel extends Observable {
 
   adaptToClient(point) {
     const adaptedPoint = {...point,
-      dateFrom: point['date_from'],
-      dateTo: point['date_to'],
+      dateFrom: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'],
+      dateTo: point['date_to'] !== null ? new Date(point['date_to']) : point['date_to'],
       basePrice: point['base_price']
     };
 
     delete adaptedPoint['date_from'];
     delete adaptedPoint['date_to'];
     delete adaptedPoint['base_price'];
-
 
     return adaptedPoint;
   }

@@ -1,6 +1,3 @@
-export const pointType = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-export const destinationType = ['Praga', 'St.Peterburg', 'Portu', 'London', 'Osaka', 'Rim', 'Barselona', 'Tokyo'];
-
 export const SortType = {
   DEFAULT: 'default',
   DATE: 'date',
@@ -16,7 +13,6 @@ export const UserAction = {
 export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
-  MAJOR: 'MAJOR',
   INIT: 'INIT'
 };
 

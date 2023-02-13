@@ -6,7 +6,6 @@ export default class NewPointPresenter {
   #pointListContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
-
   #newPointComponent = null;
 
   constructor({pointListContainer, onDataChange, onDestroy, offers, destinations}) {
@@ -66,7 +65,6 @@ export default class NewPointPresenter {
   }
 
   #handleFormSubmit = (point) => {
-
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,

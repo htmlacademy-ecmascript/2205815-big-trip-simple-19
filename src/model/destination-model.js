@@ -4,17 +4,16 @@ import Observable from '../framework/observable.js';
 
 export class DestinationModel extends Observable {
   #destinations = [];
-  destinationsApiService = null;
+  #destinationsApiService = null;
 
   constructor({destinationsApiService}) {
     super();
-    this.destinationsApiService = destinationsApiService;
+    this.#destinationsApiService = destinationsApiService;
   }
 
   async init() {
     try {
-      const destinations = await this.destinationsApiService.destinations;
-      this.#destinations = destinations.map(this.#adaptToClient);
+      this.#destinations = await this.#destinationsApiService.destinations;
     } catch(err) {
       this.#destinations = [];
     }
@@ -24,12 +23,5 @@ export class DestinationModel extends Observable {
   get destinations() {
     return this.#destinations;
 
-  }
-
-  #adaptToClient(destination) {
-    const adaptedDestination = {...destination,
-    };
-
-    return adaptedDestination;
   }
 }

@@ -2,7 +2,6 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {humanizePointDueDate} from '../utils';
 import flatpickr from 'flatpickr';
 import {OFFERS_BY_TYPE} from '../const';
-
 import 'flatpickr/dist/flatpickr.min.css';
 
 function createDestinationTypeTemplate(destinationList) {
@@ -62,13 +61,13 @@ const createDestinationContainerTemplate = (destinations) =>
                   ${createDestinationTemplate(destinations)}
                 </section>`;
 
-function createEventEditFormTemplate(point, allOffers, allDestination) {
+function createEventEditFormTemplate(point, avalibleOffers, avalibleDestinations) {
   const {basePrice, dateFrom, dateTo, type, offers: selectedOffers, destination, isDeleting, isSaving} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
-  const offerByType = allOffers.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
-  const destinationDate = allDestination.find((dest) => dest.id === destination) || [];
-  const destinationType = allDestination.map((dest) => dest.name);
+  const offerByType = avalibleOffers.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
+  const destinationDate = avalibleDestinations.find((avalibleDestination) => avalibleDestination.id === destination) || [];
+  const destinationType = avalibleDestinations.map((avalibleDestination) => avalibleDestination.name);
 
   return `
   <form class="event event--edit" action="#" method="post">
@@ -129,18 +128,22 @@ export default class EditPointView extends AbstractStatefulView {
   #handleCloseBtnClick = null;
   #datepicker = null;
   #onSubmitForm = null;
+  #offers = null;
+  #destinations = null;
+  #handleDeleteClick = null;
+  #point = null;
 
 
   constructor({point, onCloseBtnClick, onSubmitForm, handleDeleteClick, offers, destination}) {
     super();
-    this.point = point;
-    this.allOffers = offers;
-    this.allDestination = destination;
+    this.#point = point;
+    this.#offers = offers;
+    this.#destinations = destination;
     this._setState(EditPointView.parsePointToState(point));
     this.#handleCloseBtnClick = onCloseBtnClick;
     this._restoreHandlers();
     this.#onSubmitForm = onSubmitForm;
-    this.handleDeleteClick = handleDeleteClick;
+    this.#handleDeleteClick = handleDeleteClick;
   }
 
   startDateChangeHandler = ([userDate]) => {
@@ -162,7 +165,7 @@ export default class EditPointView extends AbstractStatefulView {
       {
         dateFormat: 'd/m/y H:i',
         enableTime: true,
-        defaultDate: this._state.date_from,
+        defaultDate: this._state.dateFrom,
         onChange: this.startDateChangeHandler,
       },
     );
@@ -174,9 +177,9 @@ export default class EditPointView extends AbstractStatefulView {
       {
         dateFormat: 'd/m/y H:i',
         enableTime: true,
-        defaultDate: this._state.date_to,
+        defaultDate: this._state.dateTo,
         onChange: this.endDateChangeHandler,
-        minDate: this._state.date_from,
+        minDate: this._state.dateFrom,
       },
     );
   }
@@ -267,7 +270,7 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEventEditFormTemplate(this._state, this.allOffers, this.allDestination);
+    return createEventEditFormTemplate(this._state, this.#offers, this.#destinations);
   }
 
   reset(point) {
@@ -287,11 +290,11 @@ export default class EditPointView extends AbstractStatefulView {
     this.updateElement({
       isDeleting: true
     });
-    this.handleDeleteClick(EditPointView.parseStateToPoint(this._state));
+    this.#handleDeleteClick(EditPointView.parseStateToPoint(this._state));
   };
 
   #closeBtnClickHandler = () => {
-    this.reset(this.point);
+    this.reset(this.#point);
     this.#handleCloseBtnClick();
   };
 
@@ -306,7 +309,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   #changeDestinationHandlers(evt) {
     evt.preventDefault();
-    const newDestination = this.allDestination.find((destination) => destination.name === evt.target.value);
+    const newDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
     this.updateElement({
       destination: newDestination.id,
       offers: []

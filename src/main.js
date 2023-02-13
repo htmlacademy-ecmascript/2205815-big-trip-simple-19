@@ -11,7 +11,7 @@ import OffersApiService from './API/offers-api-service.js';
 import DestinationsApiService from './API/destinations-api-service.js';
 
 
-const AUTHORIZATION = 'Basic hS2sfS44wcl152f7';
+const AUTHORIZATION = 'Basic hS2sfS44wcl152777';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple/';
 
 const siteFilterElement = document.querySelector('.trip-controls__filters');

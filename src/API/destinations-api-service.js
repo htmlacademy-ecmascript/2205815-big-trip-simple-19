@@ -17,7 +17,7 @@ export default class DestinationsApiService extends ApiService {
     const response = await this._load({
       url: `destinations/${destination.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this.#adaptToServer(destination)),
+      body: JSON.stringify(destination),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -30,7 +30,7 @@ export default class DestinationsApiService extends ApiService {
     const response = await this._load({
       url: 'destinations',
       method: Method.POST,
-      body: JSON.stringify(this.#adaptToServer(destination)),
+      body: JSON.stringify(destination),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -46,11 +46,5 @@ export default class DestinationsApiService extends ApiService {
     });
 
     return response;
-  }
-
-  #adaptToServer(destination) {
-    const adaptedDestination = {...destination,
-    };
-    return adaptedDestination;
   }
 }
