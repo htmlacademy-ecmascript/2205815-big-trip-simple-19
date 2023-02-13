@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import {humanizePointDueDate} from '../utils';
+import {humanizePointDueDate, isSelectedOffer} from '../utils';
 import {OFFERS_BY_TYPE} from '../const';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -7,8 +7,8 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 const newFormPoint = {
   'basePrice': '',
-  'dateFrom': '2024-07-10T01:55:56.845Z',
-  'dateTo': '2024-08-11T02:22:13.375Z',
+  'dateFrom': new Date(),
+  'dateTo': new Date(),
   'destination': '',
   'id': '',
   'offers': [],
@@ -22,17 +22,8 @@ function createDestinationTypeTemplate(destinationList) {
 }
 
 function createOfferTemplate(offers, selectedOffers) {
-
-  const isSelected = (selectOffers, id) => {
-    for(const selectedOfferId of selectOffers) {
-      if (selectedOfferId === id) {
-        return true;
-      }
-    }
-  };
-
-  return offers.map(({ id, title, price }) => `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" ${price} id=${id} type="checkbox" name="event-offer-luggage" ${isSelected(selectedOffers, id) ? 'checked' : ''}>
+  return offers.map(({id, title, price}) => `<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" ${price} id=${id} type="checkbox" name="event-offer-luggage" ${isSelectedOffer(selectedOffers, id) ? 'checked' : ''}>
       <label class="event__offer-label" for=${id}>
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
@@ -57,9 +48,7 @@ const createTypeEventTemplate = (offersType) =>
 
 const createDestinationTemplate = (destination) => {
   const {description: descriptionPoint, pictures: [{src, description: descriptionPhoto}]} = destination;
-
   return `<p class="event__destination-description">${descriptionPoint}</p>
-
         <div class="event__photos-container">
           <div class="event__photos-tape">
             <img class="event__photo" src=${src} alt=${descriptionPhoto}>
@@ -114,7 +103,7 @@ function createNewFormFormTemplate(point, allOffers, allDestination) {
         <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value=${humanizeDateFrom}>
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="number" name="event-end-time" value=${humanizeDateTo}>
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value=${humanizeDateTo}>
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -122,7 +111,7 @@ function createNewFormFormTemplate(point, allOffers, allDestination) {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input event__input--price" id="event-price-1" min="0" type="number"  name="event-price" value="${basePrice}" required>
+        <input class="event__input event__input--price" id="event-price-1" min="1" type="number"  name="event-price" value="${basePrice}" required>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
@@ -165,7 +154,7 @@ export default class NewPointView extends AbstractStatefulView {
     });
   };
 
-  setStartDatepicker() {
+  #setStartDatepicker() {
     this.datepicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
@@ -177,7 +166,7 @@ export default class NewPointView extends AbstractStatefulView {
     );
   }
 
-  setEndDatepicker() {
+  #setEndDatepicker() {
     this.datepicker = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
@@ -234,8 +223,8 @@ export default class NewPointView extends AbstractStatefulView {
       this.#onChangeDateToHandler(evt);
     });
 
-    this.setStartDatepicker();
-    this.setEndDatepicker();
+    this.#setStartDatepicker();
+    this.#setEndDatepicker();
   }
 
   #onChangeDateToHandler(evt) {
@@ -251,17 +240,12 @@ export default class NewPointView extends AbstractStatefulView {
   }
 
   #onChangePriceHandler(evt) {
-    if(evt.target.value > 0) {
-      this.updateElement({
-        basePrice: Math.round(evt.target.value)
-      });
+    this.updateElement({
+      basePrice: Math.round(evt.target.value)
+    });
 
-    } else {
-      this.updateElement({
-        basePrice: 1
-      });
-    }
   }
+
 
   #onOfferClickHandler(evt) {
     const id = evt.target.id;

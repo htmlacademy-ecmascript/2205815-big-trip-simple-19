@@ -8,4 +8,12 @@ function humanizePointDueDate(dueDate, dateFormat) {
   return dueDate ? dayjs(dueDate).format(dateFormat) : '';
 }
 
-export {getRandomArrayElement, humanizePointDueDate};
+const isSelectedOffer = (selectOffers, id) => {
+  for(const selectedOfferId of selectOffers) {
+    if (selectedOfferId === id) {
+      return true;
+    }
+  }
+};
+
+export {getRandomArrayElement, humanizePointDueDate, isSelectedOffer};

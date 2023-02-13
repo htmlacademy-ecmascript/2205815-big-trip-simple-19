@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import {humanizePointDueDate} from '../utils';
+import {humanizePointDueDate, isSelectedOffer} from '../utils';
 import flatpickr from 'flatpickr';
 import {OFFERS_BY_TYPE} from '../const';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -10,24 +10,14 @@ function createDestinationTypeTemplate(destinationList) {
 }
 
 const createOfferTemplate = (offers, selectedOffers) =>
-{
-  const isSelected = (selectOffers, id) => {
-    for(const selectedOfferId of selectOffers) {
-      if (selectedOfferId === id) {
-        return true;
-      }
-    }
-  };
-
-  return offers.map(({ id, title, price }) => `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" ${price} id=${id} type="checkbox" name="event-offer-luggage" ${isSelected(selectedOffers, id) ? 'checked' : ''}>
+  offers.map(({ id, title, price }) => `<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" ${price} id=${id} type="checkbox" name="event-offer-luggage" ${isSelectedOffer(selectedOffers, id) ? 'checked' : ''}>
       <label class="event__offer-label" for=${id}>
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${price}</span>
       </label>
     </div>`).join('');
-};
 
 export const createOfferContainerTemplate = (offers, selectedOffers) =>
   offers.length ? `<section class="event__section  event__section--offers">
@@ -47,7 +37,6 @@ const createDestinationTemplate = (destination) => {
   const {description: descriptionPoint, pictures:[{src, description: descriptionPhoto}]} = destination;
 
   return `<p class="event__destination-description">${descriptionPoint}</p>
-      
         <div class="event__photos-container">
           <div class="event__photos-tape">
             <img class="event__photo" src=${src} alt=${descriptionPhoto}>
@@ -110,7 +99,7 @@ function createEventEditFormTemplate(point, avalibleOffers, avalibleDestinations
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="number"  min="0" name="event-price" value="${basePrice}" required>
+        <input class="event__input  event__input--price" id="event-price-1" type="number"  min="1" name="event-price" value="${basePrice}" required>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
