@@ -21,10 +21,18 @@ function createDestinationTypeTemplate(destinationList) {
  `).join('');
 }
 
-function createOfferTemplate(offers) {
+function createOfferTemplate(offers, selectedOffers) {
 
-  return offers.map(({id, title, price}) => `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" ${price} id=${id} type="checkbox" name="event-offer-luggage" ${id}>
+  const isSelected = (selectOffers, id) => {
+    for(const selectedOfferId of selectOffers) {
+      if (selectedOfferId === id) {
+        return true;
+      }
+    }
+  };
+
+  return offers.map(({ id, title, price }) => `<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" ${price} id=${id} type="checkbox" name="event-offer-luggage" ${isSelected(selectedOffers, id) ? 'checked' : ''}>
       <label class="event__offer-label" for=${id}>
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
@@ -33,11 +41,11 @@ function createOfferTemplate(offers) {
     </div>`).join('');
 }
 
-export const createOfferContainerTemplate = (offers) =>
+export const createOfferContainerTemplate = (offers, selectedOffers) =>
   `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
-          ${createOfferTemplate(offers)}
+          ${createOfferTemplate(offers, selectedOffers)}
           </section>`;
 
 const createTypeEventTemplate = (offersType) =>
@@ -66,7 +74,7 @@ const createDestinationContainerTemplate = (destinations) =>
                 </section>`;
 
 function createNewFormFormTemplate(point, allOffers, allDestination) {
-  const {basePrice, dateFrom, dateTo, type, destination: destinationId, isDeleting, isSaving} = point;
+  const {basePrice, dateFrom, dateTo, type, destination: destinationId, isDeleting, isSaving, offers: selectedOffers} = point;
   const humanizeDateFrom = humanizePointDueDate(dateFrom, 'DD/MM/YY-HH:mm');
   const humanizeDateTo = humanizePointDueDate(dateTo, 'DD/MM/YY-HH:mm');
   const offerByType = allOffers.find((pointOffer) => pointOffer.type === point.type)?.offers || [];
@@ -106,7 +114,7 @@ function createNewFormFormTemplate(point, allOffers, allDestination) {
         <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value=${humanizeDateFrom}>
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value=${humanizeDateTo}>
+        <input class="event__input  event__input--time" id="event-end-time-1" type="number" name="event-end-time" value=${humanizeDateTo}>
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -114,7 +122,7 @@ function createNewFormFormTemplate(point, allOffers, allDestination) {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="number"  name="event-price" value="${basePrice}" required>
+        <input class="event__input event__input--price" id="event-price-1" min="0" type="number"  name="event-price" value="${basePrice}" required>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
@@ -122,7 +130,7 @@ function createNewFormFormTemplate(point, allOffers, allDestination) {
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
-    ${offerByType.length ? createOfferContainerTemplate(offerByType) : ''}
+    ${offerByType.length ? createOfferContainerTemplate(offerByType, selectedOffers) : ''}
     ${destination ? createDestinationContainerTemplate(destination) : ''}
   </form>`;
 }
@@ -243,9 +251,16 @@ export default class NewPointView extends AbstractStatefulView {
   }
 
   #onChangePriceHandler(evt) {
-    this.updateElement({
-      basePrice: evt.target.value
-    });
+    if(evt.target.value > 0) {
+      this.updateElement({
+        basePrice: Math.round(evt.target.value)
+      });
+
+    } else {
+      this.updateElement({
+        basePrice: 1
+      });
+    }
   }
 
   #onOfferClickHandler(evt) {

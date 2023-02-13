@@ -110,7 +110,7 @@ function createEventEditFormTemplate(point, avalibleOffers, avalibleDestinations
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="number"  name="event-price" value="${basePrice}" required>
+        <input class="event__input  event__input--price" id="event-price-1" type="number"  min="0" name="event-price" value="${basePrice}" required>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
@@ -119,7 +119,7 @@ function createEventEditFormTemplate(point, avalibleOffers, avalibleDestinations
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
-    ${createOfferContainerTemplate(offerByType, selectedOffers)}
+    ${offerByType.length ? createOfferContainerTemplate(offerByType, selectedOffers) : ''}
     ${createDestinationContainerTemplate(destinationDate)}
     </form>`;
 }
@@ -251,7 +251,7 @@ export default class EditPointView extends AbstractStatefulView {
   #onChangePriceHandler(evt) {
     evt.preventDefault();
     this.updateElement({
-      basePrice: evt.target.value
+      basePrice: Math.round(evt.target.value)
     });
   }
 
